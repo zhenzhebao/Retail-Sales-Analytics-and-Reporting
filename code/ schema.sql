@@ -30,7 +30,7 @@ customer_id int not null,
 employee_id int not null,
 constraint fk_employee_id foreign key (employee_id)
 references employees (employee_id),
-constraint fk_customer_id foreign key (customer_id)
+constraint fk_invoice_customer_id foreign key (customer_id)
 references customer (customer_id)
 );
 
@@ -54,7 +54,7 @@ department_id int not null,
 country_id int not null,
 manager_id int,
 temporary_employee int not null,
-constraint fk_country_id foreign key (country_id) references country (country_id),
+constraint fk_employee_country_id foreign key (country_id) references country (country_id),
 constraint fk_manager_id foreign key (manager_id) references employees (employee_id),
 constraint fk_department_id foreign key (department_id) references employee_department (department_id),
 constraint fk_position_id foreign key (position_id) references position (position_id),
@@ -88,10 +88,10 @@ city varchar(30) not null,
 zip_code int not null,
 phone_number varchar (20),
 email_address varchar(40),
-membership char(1) not null,
+membership_flag char(1) not null,
 country_id int not null,
-constraint membership_check check (membership =='0' or membership =='1'),
-constraint fk_country_id foreign key (country_id) references country (country_id)
+constraint membership_check check (membership_flag =='0' or membership_flag =='1'),
+constraint fk_customer_country_id foreign key (country_id) references country (country_id)
 );
 
 create table membership (
@@ -112,7 +112,7 @@ membership_type =='Gold' or membership_type =='Bronze'));
 
 
 -- check the entire database
-select count(c.country_id)
+select count(*)
 from invoice i
 join employees e
 on i.employee_id=e.employee_id
@@ -122,29 +122,17 @@ join employee_department ed
 on ed.department_id=e.department_id
 join invoice_product ip 
 on ip.invoiceno=i.invoiceno
-join product p
-on p.stockcode=ip.stockcode
+join product pd
+on pd.stockcode=ip.stockcode
 join category c
-on p.category_id=c.category_id
+on pd.category_id=c.category_id
 join department d
 on d.department_id=c.department_id
-join country c
-on c.country_id=e.country_id
+join country co
+on co.country_id=e.country_id
 join customer cu
 on cu.customer_id=i.customer_id
 join membership m 
 on m.customer_id =cu.customer_id
 join membership_type mt 
 on mt.membership_type_id=m.membership_type_id;
-
-
-
-
-
-
-
-
-
-
-
-
