@@ -1,4 +1,5 @@
 -- Report 4 Product Performance Report
+--This report evaluates sales performance for each product.
 select p.stockcode as 'Product Code',p.description as 'Product description',
 c.category_name as 'Category',d.product_department as 'Department',sum(ip.quantity) as 'Units sold',
 concat("$",round(sum(ip.quantity *p.unit_price),2)) as 'Total Sales', 
