@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/><style>
+table {border: medium solid #6495ed;border-collapse: collapse;width: 100%;} th{font-family: monospace;border: thin solid #6495ed;padding: 5px;background-color: #D0E3FA;}th{text-align: left;}td{font-family: sans-serif;border: thin solid #6495ed;padding: 5px;text-align: center;}.odd{background:#e8edff;}img{padding:5px; border:solid; border-color: #dddddd #aaaaaa #aaaaaa #dddddd; border-width: 1px 2px 2px 1px; background-color:white;}</style>
+</head>
+<body>
+<table><tr><th colspan="6"><pre><code>-- Report 9 Manager Hierarchy Report<br>select concat(m.first_name,' ',m.last_name) as 'Manager Name',p.position as Position,<br>count (e.employee_id) as 'Number of Direct Reports',<br>coalesce(round(avg(e.salary),2),'N/A') as'Average Salary of Direct Reports',<br>coalesce(min(e.salary),'N/A') as'Lowest salary of direct reports',<br>coalesce(max(e.salary),'N/A') as'Highest salary of direct reports'<br>from employees e<br>right join employees m<br>on e.manager_id=m.employee_id<br>join position p<br>on m.position_id=p.position_id<br>where p.position in ('Director','Manager','Senior Manager')<br>group by m.employee_id,m.first_name,m.last_name,p.position<br>order by count (e.employee_id) DESC</code></pre></th></tr><tr><th>Manager Name</th><th>Position</th><th>Number of Direct Reports</th><th>Average Salary of Direct Reports</th><th>Lowest salary of direct reports</th><th>Highest salary of direct reports</th></tr><tr class="odd"><td>William Thomas</td><td>Director</td><td>10</td><td>99,200</td><td>72,000</td><td>136,000</td></tr>
+<tr><td>Olivia Jackson</td><td>Director</td><td>10</td><td>101,300</td><td>79,000</td><td>134,000</td></tr>
+<tr class="odd"><td>Sophia Martinez</td><td>Director</td><td>9</td><td>103,333.33</td><td>81,000</td><td>138,000</td></tr>
+<tr><td>Ethan Hall</td><td>Manager</td><td>8</td><td>90,125</td><td>76,000</td><td>101,000</td></tr>
+<tr class="odd"><td>Isabella Martinez</td><td>Senior Manager</td><td>6</td><td>94,833.33</td><td>78,000</td><td>119,000</td></tr>
+<tr><td>Benjamin White</td><td>Director</td><td>3</td><td>124,000</td><td>118,000</td><td>132,000</td></tr>
+<tr class="odd"><td>James Anderson</td><td>Director</td><td>1</td><td>130,000</td><td>130,000</td><td>130,000</td></tr>
+<tr><td>Emma Harris</td><td>Senior Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Liam Martin</td><td>Senior Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Ava Thompson</td><td>Senior Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Noah Garcia</td><td>Senior Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Elijah Robinson</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Mia Clark</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Lucas Rodriguez</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Charlotte Lewis</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Mason Lee</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Amelia Walker</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Logan Young</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr class="odd"><td>Evelyn Hernandez</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>Isabella King</td><td>Manager</td><td>0</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+</table></body></html>
