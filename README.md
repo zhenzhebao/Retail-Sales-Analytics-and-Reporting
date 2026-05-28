@@ -28,6 +28,39 @@ The following ERD illustrates the relational database structure used in this pro
 ### Database Schema Diagram (DBeaver)
 <img width="70%" alt="Screenshot 2026-05-22 at 10 37 38" src="https://github.com/user-attachments/assets/2960cdc6-5973-4dfc-8b74-55b1fdc86bff" />
 
+## Tools and Skills
+
+### Database & Tools
+
+- SQL
+- SQLite
+- DBeaver
+- Relational Database Design
+- Entity Relationship Diagram (ERD)
+
+### Database Design Concepts
+
+- Data Normalization
+- One-to-Many Relationships
+- Many-to-Many Relationships
+- Unary Relationships
+- Binary Relationships
+- Supertype and Subtype Constructs
+- Not Null Constraints
+- CHECK Constraints
+### SQL Concepts
+
+- Joins
+- Aggregate Functions
+- Common Table Expressions (CTEs)
+- Subqueries
+- Window Functions
+- CASE Statements
+- EXISTS / NOT EXISTS
+- Date Functions
+- Data Quality Validation
+
+
 
 
 
