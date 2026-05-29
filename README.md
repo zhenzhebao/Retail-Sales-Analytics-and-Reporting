@@ -88,9 +88,8 @@ Included Reports:
 
 ## Key Findings
 
-1. The United Kingdom generated the majority of total company revenue and represented the largest customer base.
-   
-<img width="70%" alt="Screenshot 2026-05-29 at 10 14 17" src="https://github.com/user-attachments/assets/d39c9482-7386-48d5-bbf7-e62104b381b1" />
+1. The United Kingdom generated the majority of total company revenue and represented the largest customer base.   
+   <img width="70%" alt="Screenshot 2026-05-29 at 10 14 17" src="https://github.com/user-attachments/assets/d39c9482-7386-48d5-bbf7-e62104b381b1" />
 
 2. Most customers were classified as new customers, while loyal customers contributed the highest proportion of total revenue.
    <img width="70%" alt="Screenshot 2026-05-29 at 10 14 55" src="https://github.com/user-attachments/assets/37400e97-5dd4-4a3f-9469-2c092a6f79be" />
