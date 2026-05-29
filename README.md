@@ -92,6 +92,20 @@ Included Reports:
 
 - Report 9: Data Quality Audit
 
+## Key Findings
+
+1. The United Kingdom generated the majority of total company revenue and represented the largest customer base.
+   
+<img width="70%" alt="Screenshot 2026-05-29 at 10 14 17" src="https://github.com/user-attachments/assets/d39c9482-7386-48d5-bbf7-e62104b381b1" />
+
+2. Most customers were classified as new customers, while loyal customers contributed the highest proportion of total revenue.
+   <img width="70%" alt="Screenshot 2026-05-29 at 10 14 55" src="https://github.com/user-attachments/assets/37400e97-5dd4-4a3f-9469-2c092a6f79be" />
+
+3. The best-selling product by quantity sold was *World War 2 Gliders Asstd Designs*.
+   <img width="70%" alt="Screenshot 2026-05-29 at 10 15 43" src="https://github.com/user-attachments/assets/fcb3303f-bfa2-4460-876c-b678a89e76da" />
+
+4. Data quality auditing identified products with invalid pricing information, including records with a unit price of zero.
+   <img width="70%" alt="Screenshot 2026-05-29 at 10 17 02" src="https://github.com/user-attachments/assets/92983788-7775-4212-a0d0-d45777d5e49f" />
 
 
 
