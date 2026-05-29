@@ -33,7 +33,6 @@ The following ERD illustrates the relational database structure used in this pro
 ### Database & Tools
 
 - SQL
-- SQLite
 - DBeaver
 - Relational Database Design
 - Entity Relationship Diagram (ERD)
@@ -41,11 +40,6 @@ The following ERD illustrates the relational database structure used in this pro
 ### Database Design Concepts
 
 - Data Normalization
-- One-to-Many Relationships
-- Many-to-Many Relationships
-- Unary Relationships
-- Binary Relationships
-- Supertype and Subtype Constructs
 - Not Null Constraints
 - CHECK Constraints
 ### SQL Concepts
