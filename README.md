@@ -60,6 +60,39 @@ The following ERD illustrates the relational database structure used in this pro
 - Date Functions
 - Data Quality Validation
 
+## SQL Reports and Analysis
+
+### Sales Data Analysis
+
+This section focuses on overall sales performance across countries, products, employees, and time periods. The reports analyze key business metrics such as customer volume, total sales, average transaction value, monthly sales trends, product performance, and employee sales performance. These reports help identify top-performing countries, products, and employees while highlighting overall sales trends over time.
+
+Included Reports:
+
+- Report 2: Sales by Country
+- Report 4: Product Performance Report
+- Report 5: Employee Sales Performance
+- Report 7: Monthly Sales Trend Analysis
+
+### Customer Analysis
+
+This section focuses on customer information, purchasing behavior, customer retention, and revenue contribution. The reports analyze customer purchase history, customer loyalty and revenue rankings to better understand customer value and purchasing behavior.
+
+Included Reports:
+
+- Report 1: Customer Directory Report
+- Report 3: Customer Purchase History
+- Report 8: Customer Retention Analysis
+- Report 10: Customer Revenue Ranking
+
+### Data Quality Verification
+
+This report validates data quality across the database by identifying missing information, invalid references, and inconsistencies that may affect reporting accuracy.
+
+Included Reports:
+
+- Report 9: Data Quality Audit
+
+
 
 
 
