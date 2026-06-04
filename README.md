@@ -1,13 +1,13 @@
 # Online Retail Sales Database
 ## Introduction
 
-For this project, I created a relational database in SQL by analyzing the information within the online retail sales dataset. I normalized the relationships in the dataset and designed an entity relationship diagram (ERD) to structure the database before creating the tables and importing the data into the database. After building the database, I developed various SQL reports to conduct business analysis from different perspectives and identify trends and insights within the sales data.
+In this project, I designed a relational database using SQL to store, manage, and analyze sales data. Using an online retail sales dataset, I analyzed and normalized the relationships among entities to design the database schema. Additional entities were added to create a more realistic analysis.
 
-The original dataset contains transactional retail information such as invoices, customers, products, quantities, pricing, and country information. I extended the original dataset by adding additional entities and relationships including employee, country, membership, position, department, category, and product department tables to create a more realistic and business-oriented relational database.
+Various SQL reports were developed to reveal overall sales trends and patterns, evaluate sales performance by product and employee, conduct customer retention analysis, and identify customer purchasing behavior. I created database views to improve the efficiency and reusability of analytical queries. I implemented an index on a frequently queried column to enhance query performance. Query execution plans were reviewed to evaluate the impact of indexing and demonstrate performance optimization concepts.
 
-Dataset Source:
+In addition, a data quality audit report was created to identify potential data issues within the database. Database triggers were implemented to address the issue found during the audit.
 
-https://archive.ics.uci.edu/dataset/352/online+retail
+Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
 ## Database Design
 
