@@ -42,6 +42,9 @@ The following ERD illustrates the relational database structure used in this pro
 - Data Normalization
 - Not Null Constraints
 - CHECK Constraints
+-	Views
+-	Indexes
+-	Triggers
 ### SQL Concepts
 
 - Joins
@@ -53,6 +56,7 @@ The following ERD illustrates the relational database structure used in this pro
 - EXISTS / NOT EXISTS
 - Date Functions
 - Data Quality Validation
+- Query Performance Optimization
 
 ## SQL Reports and Analysis
 
