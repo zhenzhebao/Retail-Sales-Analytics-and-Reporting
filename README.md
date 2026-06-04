@@ -104,6 +104,21 @@ Included Reports:
 4. Data quality auditing identified products with invalid pricing information, including records with a unit price of zero.
    <img width="70%" alt="Screenshot 2026-05-29 at 10 17 02" src="https://github.com/user-attachments/assets/92983788-7775-4212-a0d0-d45777d5e49f" />
 
+## Database Features
+
+### Views
+
+Created a customer revenue view to summarize the number of orders, total revenue, and average order value for each customer. This view improves report reusability.
+
+### Indexes
+
+Implemented an index on the `country_id` column in the Customer table, which is frequently used in filtering and join operations. Before the index was created, SQLite performed a full table scan to locate customers from the United Kingdom. After the index was implemented, SQLite utilized the index to directly locate matching records, reducing the amount of data scanned and improving query performance.
+
+### Triggers
+
+Based on the findings of the Data Quality Audit Report (Report 9), triggers were implemented to prevent users from inserting or updating products with zero or negative unit prices in the Product table.
+
+
 
 
 
