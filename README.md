@@ -1,13 +1,13 @@
 # Online Retail Sales Database
 ## Introduction
 
-For this project, I created a relational database in SQL by analyzing the information within the online retail sales dataset. I normalized the relationships in the dataset and designed an entity relationship diagram (ERD) to structure the database before creating the tables and importing the data into the database. After building the database, I developed various SQL reports to conduct business analysis from different perspectives and identify trends and insights within the sales data.
+In this project, I designed a relational database using SQL to store, manage, and analyze sales data. Using an online retail sales dataset, I analyzed and normalized the relationships among entities to design the database schema. Additional entities were added to create a more realistic analysis.
 
-The original dataset contains transactional retail information such as invoices, customers, products, quantities, pricing, and country information. I extended the original dataset by adding additional entities and relationships including employee, country, membership, position, department, category, and product department tables to create a more realistic and business-oriented relational database.
+Various SQL reports were developed to reveal overall sales trends and patterns, evaluate sales performance by product and employee, conduct customer retention analysis, and identify customer purchasing behavior. I created database views to improve the efficiency and reusability of analytical queries. I implemented an index on a frequently queried column to enhance query performance. Query execution plans were reviewed to evaluate the impact of indexing and demonstrate performance optimization concepts.
 
-Dataset Source:
+In addition, a data quality audit report was created to identify potential data issues within the database. Database triggers were implemented to address the issue found during the audit.
 
-https://archive.ics.uci.edu/dataset/352/online+retail
+Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
 ## Database Design
 
@@ -42,6 +42,9 @@ The following ERD illustrates the relational database structure used in this pro
 - Data Normalization
 - Not Null Constraints
 - CHECK Constraints
+-	Views
+-	Indexes
+-	Triggers
 ### SQL Concepts
 
 - Joins
@@ -53,6 +56,7 @@ The following ERD illustrates the relational database structure used in this pro
 - EXISTS / NOT EXISTS
 - Date Functions
 - Data Quality Validation
+- Query Performance Optimization
 
 ## SQL Reports and Analysis
 
@@ -99,6 +103,34 @@ Included Reports:
 
 4. Data quality auditing identified products with invalid pricing information, including records with a unit price of zero.
    <img width="70%" alt="Screenshot 2026-05-29 at 10 17 02" src="https://github.com/user-attachments/assets/92983788-7775-4212-a0d0-d45777d5e49f" />
+
+## Database Features
+
+### Views
+
+Created a customer revenue view to summarize the number of orders, total revenue, and average order value for each customer. This view improves report reusability.
+
+### Indexes
+
+Implemented an index on the `country_id` column in the Customer table, which is frequently used in filtering and join operations. Before the index was created, SQLite performed a full table scan to locate customers from the United Kingdom. After the index was implemented, SQLite utilized the index to directly locate matching records, reducing the amount of data scanned and improving query performance.
+
+**Before**
+
+<img width="888" height="114" alt="Screenshot 2026-06-04 at 15 18 30" src="https://github.com/user-attachments/assets/9eb04fbd-b6fd-4da0-b223-2aaa874f141f" />
+
+**After**
+
+<img width="889" height="117" alt="Screenshot 2026-06-04 at 15 18 38" src="https://github.com/user-attachments/assets/d25eb198-a59d-4461-92f5-511c67a8734a" />
+
+### Triggers
+
+Based on the findings of the Data Quality Audit Report (Report 9), triggers were implemented to prevent users from inserting or updating products with zero or negative unit prices in the Product table.
+
+<img width="1322" height="133" alt="Screenshot 2026-06-04 at 15 20 02" src="https://github.com/user-attachments/assets/f62b1944-d8ac-4146-bf7a-39c4a1a25f82" />
+
+<img width="1152" height="156" alt="Screenshot 2026-06-04 at 15 20 09" src="https://github.com/user-attachments/assets/4e950c0f-1559-4627-aa6b-0158590dc013" />
+
+
 
 
 
