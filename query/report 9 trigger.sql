@@ -1,5 +1,5 @@
 -- Based on the result of data audit report from report 9, 
--- implement a trigge to prevent people setting zero or negative unit price in product table
+-- implement a trigger to prevent people setting zero or negative unit price in product table
 
 create trigger trg_product_positive_price_only_insert
 before insert 
