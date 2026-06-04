@@ -1,13 +1,13 @@
 -- relationship 1: category and department
-create table department (
-department_id int constraint department_id_pk primary key,
+CREATE TABLE department (
+department_id integer constraint department_id_pk primary key autoincrement,
 product_department varchar(30) not null
 );
 
-create table category (
+CREATE TABLE category (
 category_id int constraint category_id_pk primary key,
 category_name varchar(30) not null,
-department_id int not null,
+department_id integer not null,
 constraint fk_department_id foreign key (department_id)
 references department (department_id)
 );
