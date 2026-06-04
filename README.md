@@ -114,9 +114,22 @@ Created a customer revenue view to summarize the number of orders, total revenue
 
 Implemented an index on the `country_id` column in the Customer table, which is frequently used in filtering and join operations. Before the index was created, SQLite performed a full table scan to locate customers from the United Kingdom. After the index was implemented, SQLite utilized the index to directly locate matching records, reducing the amount of data scanned and improving query performance.
 
+**Before**
+
+<img width="888" height="114" alt="Screenshot 2026-06-04 at 15 18 30" src="https://github.com/user-attachments/assets/9eb04fbd-b6fd-4da0-b223-2aaa874f141f" />
+
+**After**
+
+<img width="889" height="117" alt="Screenshot 2026-06-04 at 15 18 38" src="https://github.com/user-attachments/assets/d25eb198-a59d-4461-92f5-511c67a8734a" />
+
 ### Triggers
 
 Based on the findings of the Data Quality Audit Report (Report 9), triggers were implemented to prevent users from inserting or updating products with zero or negative unit prices in the Product table.
+
+<img width="1322" height="133" alt="Screenshot 2026-06-04 at 15 20 02" src="https://github.com/user-attachments/assets/f62b1944-d8ac-4146-bf7a-39c4a1a25f82" />
+
+<img width="1152" height="156" alt="Screenshot 2026-06-04 at 15 20 09" src="https://github.com/user-attachments/assets/4e950c0f-1559-4627-aa6b-0158590dc013" />
+
 
 
 
