@@ -52,10 +52,11 @@ The following ERD illustrates the relational database structure used in this pro
 - Common Table Expressions (CTEs)
 - Subqueries
 - Window Functions
+- Ranking Functions
 - CASE Statements
 - EXISTS / NOT EXISTS
 - Date Functions
-- Data Quality Validation
+- Data Cleaning and Validation
 - Query Performance Optimization
 
 ## SQL Reports and Analysis
@@ -82,6 +83,15 @@ Included Reports:
 - Report 8: Customer Retention Analysis
 - Report 10: Customer Revenue Ranking
 
+### Product Contribution Analysis
+
+This section evaluates how individual products contribute to revenue within their product categories. The report calculates product revenue, category revenue, and each product's percentage contribution to its category.
+
+Included Report:
+
+- Report 12: Product Revenue Share Within Category
+
+
 ### Data Quality Verification
 
 This report validates data quality across the database by identifying missing information, invalid references, and inconsistencies that may affect reporting accuracy.
@@ -89,6 +99,7 @@ This report validates data quality across the database by identifying missing in
 Included Reports:
 
 - Report 9: Data Quality Audit
+- Report 11: Customer Quality and Value Report
 
 ## Key Findings
 
