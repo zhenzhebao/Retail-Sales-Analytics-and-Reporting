@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/><style>
+table {border: medium solid #6495ed;border-collapse: collapse;width: 100%;} th{font-family: monospace;border: thin solid #6495ed;padding: 5px;background-color: #D0E3FA;}th{text-align: left;}td{font-family: sans-serif;border: thin solid #6495ed;padding: 5px;text-align: center;}.odd{background:#e8edff;}img{padding:5px; border:solid; border-color: #dddddd #aaaaaa #aaaaaa #dddddd; border-width: 1px 2px 2px 1px; background-color:white;}</style>
+</head>
+<body>
+<table><tr><th colspan="6"><pre><code>--Report 5 Employee Sales Performance<br>--This report reveals the employee performance for people working in the sales department.<br>select concat(e.first_name,' ',e.last_name) as Name,<br>po.position as Position,ed.employee_department as Department,count(distinct i.invoiceno) as "Number of invoices processed",<br>round(cast(sum(ip.quantity *p.unit_price) as numeric),2) as "Total Sales",<br>round(cast(sum(ip.quantity *p.unit_price)*1.0/nullif (count(distinct i.invoiceno),0) as numeric),2) as "Average Invoice Value"<br>from employees e<br>join position po<br>on e.position_id=po.position_id<br>join employee_department ed<br>on e.department_id=ed.department_id<br>join invoice i<br>on i.employee_id=e.employee_id<br>join invoice_product ip <br>on i.invoiceno=ip.invoiceno<br>join product p<br>on ip.stockcode=p.stockcode<br>where ip.quantity&gt;0 and ed.employee_department='Sales'<br>group by e.employee_id,e.first_name,e.last_name,po.position,ed.employee_department<br>order by round(cast(sum(ip.quantity *p.unit_price) as numeric),2) DESC</code></pre></th></tr><tr><th>name</th><th>position</th><th>department</th><th>Number of invoices processed</th><th>Total Sales</th><th>Average Invoice Value</th></tr><tr class="odd"><td>Matthew Perez</td><td>Senior Sales Rep</td><td>Sales</td><td>1,515</td><td>8,410,765.38</td><td>5,551.66</td></tr>
+<tr><td>David Turner</td><td>Sales Rep</td><td>Sales</td><td>1,493</td><td>6,523,280.85</td><td>4,369.24</td></tr>
+<tr class="odd"><td>Noah Garcia</td><td>Senior Manager</td><td>Sales</td><td>1,582</td><td>5,408,922.78</td><td>3,419.04</td></tr>
+<tr><td>Harper Allen</td><td>Senior Sales Rep</td><td>Sales</td><td>1,502</td><td>5,123,292.49</td><td>3,410.98</td></tr>
+<tr class="odd"><td>Liam Wilson</td><td>Sales Rep</td><td>Sales</td><td>1,493</td><td>4,899,996.91</td><td>3,281.98</td></tr>
+<tr><td>Ava Walker</td><td>Senior Sales Rep</td><td>Sales</td><td>1,533</td><td>4,107,299.73</td><td>2,679.26</td></tr>
+<tr class="odd"><td>Mason Lewis</td><td>Sales Rep</td><td>Sales</td><td>1,486</td><td>4,096,421.38</td><td>2,756.68</td></tr>
+<tr><td>Olivia Martinez</td><td>Senior Sales Rep</td><td>Sales</td><td>1,581</td><td>4,035,340.18</td><td>2,552.4</td></tr>
+<tr class="odd"><td>Logan Scott</td><td>Sales Rep</td><td>Sales</td><td>1,485</td><td>3,434,401.38</td><td>2,312.73</td></tr>
+<tr><td>Sophia Clark</td><td>Senior Sales Rep</td><td>Sales</td><td>1,526</td><td>3,000,714.75</td><td>1,966.39</td></tr>
+<tr class="odd"><td>Hannah Phillips</td><td>Sales Rep</td><td>Sales</td><td>1,487</td><td>2,892,707.63</td><td>1,945.33</td></tr>
+<tr><td>Zoe Roberts</td><td>Senior Sales Rep</td><td>Sales</td><td>1,420</td><td>2,579,225.99</td><td>1,816.36</td></tr>
+<tr class="odd"><td>Mia Green</td><td>Sales Rep</td><td>Sales</td><td>1,542</td><td>2,434,541.25</td><td>1,578.82</td></tr>
+</table></body></html>

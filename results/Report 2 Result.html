@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/><style>
+table {border: medium solid #6495ed;border-collapse: collapse;width: 100%;} th{font-family: monospace;border: thin solid #6495ed;padding: 5px;background-color: #D0E3FA;}th{text-align: left;}td{font-family: sans-serif;border: thin solid #6495ed;padding: 5px;text-align: center;}.odd{background:#e8edff;}img{padding:5px; border:solid; border-color: #dddddd #aaaaaa #aaaaaa #dddddd; border-width: 1px 2px 2px 1px; background-color:white;}</style>
+</head>
+<body>
+<table><tr><th colspan="5"><pre><code>-- Report 2 Sales by Country<br>-- This report reveals sales performance and customer distribution by country.<br>with t as (select sum(ip.quantity *p.unit_price) as sales, i.invoiceno,i.customer_id <br>from invoice i <br>join invoice_product ip <br>on ip.invoiceno=i.invoiceno <br>join product p<br>on p.stockcode =ip.stockcode<br>where ip.quantity&gt;0<br>group by i.invoiceno,i.customer_id)<br>select co.country_name as Country,<br>count(distinct c.customer_id) as "Number of Customers",<br>count(distinct t.invoiceno) as "Number of Invoices",round(cast(sum(t.sales) as numeric),2) as "Total Sales",<br>round(cast(avg(t.sales) as numeric),2) as "Average Transaction Value"<br>from customer c<br>join country co<br>on co.country_id=c.country_id<br>join t<br>on t.customer_id=c.customer_id<br>group by co.country_name<br>order by sum(t.sales) DESC</code></pre></th></tr><tr><th>country</th><th>Number of Customers</th><th>Number of Invoices</th><th>Total Sales</th><th>Average Transaction Value</th></tr><tr class="odd"><td>United Kingdom</td><td>3,779</td><td>17,407</td><td>48,724,605.79</td><td>2,799.14</td></tr>
+<tr><td>Belgium</td><td>25</td><td>99</td><td>2,640,434.46</td><td>26,671.06</td></tr>
+<tr class="odd"><td>Germany</td><td>91</td><td>497</td><td>1,634,031.01</td><td>3,287.79</td></tr>
+<tr><td>France</td><td>84</td><td>395</td><td>859,344.99</td><td>2,175.56</td></tr>
+<tr class="odd"><td>EIRE</td><td>4</td><td>302</td><td>823,756.95</td><td>2,727.67</td></tr>
+<tr><td>Spain</td><td>30</td><td>111</td><td>331,461.21</td><td>2,986.14</td></tr>
+<tr class="odd"><td>Italy</td><td>13</td><td>87</td><td>322,091.15</td><td>3,702.2</td></tr>
+<tr><td>Israel</td><td>4</td><td>20</td><td>261,244.82</td><td>13,062.24</td></tr>
+<tr class="odd"><td>Portugal</td><td>18</td><td>93</td><td>248,711.75</td><td>2,674.32</td></tr>
+<tr><td>Netherlands</td><td>9</td><td>43</td><td>160,007.67</td><td>3,721.11</td></tr>
+<tr class="odd"><td>Switzerland</td><td>22</td><td>96</td><td>155,779.7</td><td>1,622.71</td></tr>
+<tr><td>Channel Islands</td><td>9</td><td>37</td><td>140,398.76</td><td>3,794.56</td></tr>
+<tr class="odd"><td>Sweden</td><td>8</td><td>30</td><td>104,183.31</td><td>3,472.78</td></tr>
+<tr><td>Australia</td><td>9</td><td>64</td><td>95,605.95</td><td>1,493.84</td></tr>
+<tr class="odd"><td>Cyprus</td><td>8</td><td>66</td><td>82,114.76</td><td>1,244.16</td></tr>
+<tr><td>Japan</td><td>8</td><td>52</td><td>72,003.34</td><td>1,384.68</td></tr>
+<tr class="odd"><td>Norway</td><td>9</td><td>27</td><td>65,797.92</td><td>2,436.96</td></tr>
+<tr><td>Lithuania</td><td>1</td><td>11</td><td>50,844.99</td><td>4,622.27</td></tr>
+<tr class="odd"><td>Denmark</td><td>9</td><td>25</td><td>34,068.04</td><td>1,362.72</td></tr>
+<tr><td>Austria</td><td>11</td><td>34</td><td>29,666.51</td><td>872.54</td></tr>
+<tr class="odd"><td>Bahrain</td><td>3</td><td>12</td><td>17,643.61</td><td>1,470.3</td></tr>
+<tr><td>Canada</td><td>4</td><td>16</td><td>13,419.21</td><td>838.7</td></tr>
+<tr class="odd"><td>United Arab Emirates</td><td>2</td><td>9</td><td>12,052.1</td><td>1,339.12</td></tr>
+<tr><td>Iceland</td><td>1</td><td>8</td><td>10,501.66</td><td>1,312.71</td></tr>
+<tr class="odd"><td>Lebanon</td><td>1</td><td>12</td><td>10,470.32</td><td>872.53</td></tr>
+<tr><td>Finland</td><td>10</td><td>22</td><td>9,790.55</td><td>445.03</td></tr>
+<tr class="odd"><td>Unspecified</td><td>5</td><td>9</td><td>7,427.25</td><td>825.25</td></tr>
+<tr><td>Poland</td><td>6</td><td>14</td><td>6,138.88</td><td>438.49</td></tr>
+<tr class="odd"><td>Czech Republic</td><td>1</td><td>2</td><td>5,985.78</td><td>2,992.89</td></tr>
+<tr><td>Brazil</td><td>1</td><td>6</td><td>5,056.85</td><td>842.81</td></tr>
+<tr class="odd"><td>Greece</td><td>4</td><td>16</td><td>4,877.64</td><td>304.85</td></tr>
+<tr><td>European Community</td><td>1</td><td>2</td><td>4,136.68</td><td>2,068.34</td></tr>
+<tr class="odd"><td>USA</td><td>4</td><td>9</td><td>892.95</td><td>99.22</td></tr>
+<tr><td>Malta</td><td>2</td><td>3</td><td>843.91</td><td>281.3</td></tr>
+<tr class="odd"><td>Singapore</td><td>1</td><td>3</td><td>719.38</td><td>239.79</td></tr>
+<tr><td>RSA</td><td>1</td><td>4</td><td>426.03</td><td>106.51</td></tr>
+<tr class="odd"><td>Hong Kong</td><td>1</td><td>1</td><td>213.79</td><td>213.79</td></tr>
+<tr><td>Saudi Arabia</td><td>1</td><td>1</td><td>161.04</td><td>161.04</td></tr>
+</table></body></html>

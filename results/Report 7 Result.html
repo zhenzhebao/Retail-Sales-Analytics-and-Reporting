@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/><style>
+table {border: medium solid #6495ed;border-collapse: collapse;width: 100%;} th{font-family: monospace;border: thin solid #6495ed;padding: 5px;background-color: #D0E3FA;}th{text-align: left;}td{font-family: sans-serif;border: thin solid #6495ed;padding: 5px;text-align: center;}.odd{background:#e8edff;}img{padding:5px; border:solid; border-color: #dddddd #aaaaaa #aaaaaa #dddddd; border-width: 1px 2px 2px 1px; background-color:white;}</style>
+</head>
+<body>
+<table><tr><th colspan="7"><pre><code>-- Report 7 Monthly Sales Trend<br>-- This report aggregates sales data at the monthly level and then reveals the month-to-month trends.<br>with sales as (select i.invoicedate,i.invoiceno,sum(ip.quantity) as quantity,sum((ip.quantity *p.unit_price)) as invoice_value<br>from invoice i<br>join invoice_product ip<br>on i.invoiceno=ip.invoiceno<br>join product p<br>on ip.stockcode=p.stockcode<br>where ip.quantity&gt;0<br>group by i.invoiceno,i.invoicedate),<br>monthly_sales as (select to_char(invoicedate,'YYYY-MM') as Month,count(invoiceno) as Number_of_invoices,<br>sum(quantity) as Total_units_sold ,round(cast(sum(invoice_value) as numeric),2) as Total_revenue,<br>round(cast(avg(invoice_value) as numeric),2) as Average_invoice_value<br>from sales<br>group by to_char(invoicedate,'YYYY-MM'))<br>select Month,Number_of_invoices,Total_units_sold,Total_revenue,Average_invoice_value,<br>round(cast(Total_revenue-lag(Total_revenue,1) over(order by Month) as numeric),2) as changes,<br>round(cast((Total_revenue - lag(Total_revenue, 1) over (order by Month)) * 1.0<br>/ nullif(lag(Total_revenue, 1) over (order by Month), 0)as numeric),2)*100 as percentage_changes<br>from monthly_sales<br>order by Month</code></pre></th></tr><tr><th>month</th><th>number_of_invoices</th><th>total_units_sold</th><th>total_revenue</th><th>average_invoice_value</th><th>changes</th><th>percentage_changes</th></tr><tr class="odd"><td>2010-12</td><td>1,694</td><td>16,522</td><td>6,461,997.08</td><td>3,814.64</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>2011-01</td><td>1,237</td><td>11,243</td><td>2,061,428.03</td><td>1,666.47</td><td>-4,400,569.05</td><td>-68</td></tr>
+<tr class="odd"><td>2011-02</td><td>1,170</td><td>20,008</td><td>5,455,099.01</td><td>4,662.48</td><td>3,393,670.98</td><td>165</td></tr>
+<tr><td>2011-03</td><td>1,458</td><td>10,261</td><td>5,018,434.15</td><td>3,442</td><td>-436,664.86</td><td>-8</td></tr>
+<tr class="odd"><td>2011-04</td><td>1,216</td><td>7,276</td><td>2,341,052.07</td><td>1,925.21</td><td>-2,677,382.08</td><td>-53</td></tr>
+<tr><td>2011-05</td><td>1,638</td><td>11,820</td><td>6,399,824.16</td><td>3,907.1</td><td>4,058,772.09</td><td>173</td></tr>
+<tr class="odd"><td>2011-06</td><td>1,487</td><td>10,123</td><td>2,719,592.51</td><td>1,828.91</td><td>-3,680,231.65</td><td>-58</td></tr>
+<tr><td>2011-07</td><td>1,375</td><td>11,044</td><td>2,057,822.95</td><td>1,496.6</td><td>-661,769.56</td><td>-24</td></tr>
+<tr class="odd"><td>2011-08</td><td>1,311</td><td>11,131</td><td>4,381,225.92</td><td>3,341.9</td><td>2,323,402.97</td><td>113</td></tr>
+<tr><td>2011-09</td><td>1,767</td><td>13,464</td><td>4,626,327.7</td><td>2,618.18</td><td>245,101.78</td><td>6</td></tr>
+<tr class="odd"><td>2011-10</td><td>1,916</td><td>19,723</td><td>5,244,445.43</td><td>2,737.18</td><td>618,117.73</td><td>13</td></tr>
+<tr><td>2011-11</td><td>2,600</td><td>19,050</td><td>9,112,396.55</td><td>3,504.77</td><td>3,867,951.12</td><td>74</td></tr>
+<tr class="odd"><td>2011-12</td><td>776</td><td>5,014</td><td>1,067,265.15</td><td>1,375.34</td><td>-8,045,131.4</td><td>-88</td></tr>
+</table></body></html>
