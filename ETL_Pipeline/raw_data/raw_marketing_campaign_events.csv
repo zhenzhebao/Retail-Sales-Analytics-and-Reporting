@@ -1,0 +1,17 @@
+campaign_name,campaign_type,customer_email,sent_date,opened,clicked,converted,conversion_amount,unsubscribe
+Spring Sale,Email, EMMA.HALL17850@EXAMPLE.COM ,2026-03-01,Y,Yes,1,$85.50,No
+Spring Sale ,email,amelia.anderson13047@example.com,03/01/2026,N,No,0,,N
+Spring Sale,Email,thomas.reed12583 @ example.com,2026/03/01,Yes,Y,Yes,120,No
+Spring Sale,EMAIL,amelia.scott13748@example.com,2026-03-01,0,0,0,0,0
+Spring Sale,Email,amelia.scott13748@example.com,2026-03-01,0,0,0,0,0
+Membership Upgrade,Email, nathan.turner15100@example.com ,2026-04-15,Y,Y,N,,No
+Membership Upgrade,email,ELENA.TAYLOR15311@EXAMPLE.COM,04-15-2026,Yes,No,No,,No
+Membership Upgrade,Email,isabella.morris16098@example.com,2026-04-15,Y,Y,Y,$240.00,N
+Membership Upgrade,Email,unknown.customer@example.com,2026-04-15,Y,N,N,,N
+Summer Clearance,Email,matthew.cook12431@example.com,2026-06-10,true,false,false,,false
+Summer Clearance,Email,jack.reed13408@example.com,2026-06-10,TRUE,TRUE,TRUE,199.99,FALSE
+Summer Clearance,Email,liam.taylor15513@example.com,2026-06-10,No,No,No,0,No
+Summer Clearance,Email,,2026-06-10,Y,Y,N,,N
+Winback Offer,Email,emma.hall17850@example.com,2026-07-05,Y,Y,Y,$64.25,No
+Winback Offer,Email,amelia.anderson13047@example.com,2026-07-05,Y,N,N,,Y
+Winback Offer,Email,not_an_email,2026-07-05,N,N,N,,N

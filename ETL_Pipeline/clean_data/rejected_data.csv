@@ -1,0 +1,4 @@
+campaign_name,campaign_type,customer_email,sent_date,opened,clicked,converted,conversion_amount,unsubscribe,customer_id
+Membership Upgrade,Email,unknown.customer@example.com,2026-04-15,Y,N,N,,N,
+Summer Clearance,Email,Missing or Invalid Email,2026-06-10,Y,Y,N,,N,
+Winback Offer,Email,Missing or Invalid Email,2026-07-05,N,N,N,,N,
