@@ -7,6 +7,10 @@ The database is based on the online retail sales dataset; additional entities we
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
+## Project Evolution
+
+Initially, Excel was chosen to clean the existing data and store it in a SQLite database for further analysis. Later on, the database was migrated to a local PostgreSQL server to support additional SQL functions and standard syntax, and allow Tableau to retrieve the data from the server directly for visualization. During the migration, additional campaign data has been cleaned with a Python script and added to the database.
+
 ## Database Design
 
 ### Entity Relationship Diagram (ERD)
