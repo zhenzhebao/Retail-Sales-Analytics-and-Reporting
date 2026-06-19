@@ -1,11 +1,9 @@
 # Online Retail Sales Database
 ## Introduction
 
-In this project, I designed a relational database using SQL to store, manage, and analyze sales data. Using an online retail sales dataset, I analyzed and normalized the relationships among entities to design the database schema. Additional entities were added to create a more realistic analysis.
+This project demonstrates how to design a relational database in SQL, clean up the existing data in Excel and Python to import into the database, construct various SQL reports to reveal additional insights, and use Tableau to present the findings visually. 
 
-Various SQL reports were developed to reveal overall sales trends and patterns, evaluate sales performance by product and employee, conduct customer retention analysis, and identify customer purchasing behavior. I created database views to improve the efficiency and reusability of analytical queries. I implemented an index on a frequently queried column to enhance query performance. Query execution plans were reviewed to evaluate the impact of indexing and demonstrate performance optimization concepts.
-
-In addition, a data quality audit report was created to identify potential data issues within the database. Database triggers were implemented to address the issue found during the audit.
+The database is based on the online retail sales dataset; additional entities were added to create a more realistic analysis.
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
