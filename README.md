@@ -12,23 +12,24 @@ Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 Initially, Excel was chosen to clean the existing data and store it in a SQLite database for further analysis. Later on, the database was migrated to a local PostgreSQL server to support additional SQL functions and standard syntax, and allow Tableau to retrieve the data from the server directly for visualization. During the migration, additional campaign data has been cleaned with a Python script and added to the database.
 
 ## Database Design
+Besides the entities from the online sales dataset, additional entities such as employees, category, campaign, and so on have been added to support a more realistic analysis.
 
 ### Entity Relationship Diagram (ERD)
+The following ERD illustrates the relational database structure used in this project. The database contains 12 strong entities. 2 associative entities were created to resolve many-to-many relationships between invoice and product, campaign and customers.
 
-The following ERD illustrates the relational database structure used in this project. The database contains 11 strong entities and 1 associative entity created to resolve a many-to-many relationship between invoices and products.
-
-### The schema includes:
+The schema includes:
 
 - One-to-many relationships
--	Many-to-many relationships
--	Unary relationships
--	Binary relationships
--	Supertype and subtype constructs
+- Many-to-many relationships
+- Unary relationships
+- Binary relationships
+- Supertype and subtype constructs
 
- <img width="70%" alt="Online_retail_ERD" src="https://github.com/user-attachments/assets/a7a0d7ce-d1fb-4da2-aa6e-aa4b01d7191f" />
-
+<img width="70%" alt="Online_retail_ERD" src="https://github.com/user-attachments/assets/67939390-f456-4979-8f7c-a6a02e558e4e" />
+ 
 ### Database Schema Diagram (DBeaver)
-<img width="70%" alt="Screenshot 2026-05-22 at 10 37 38" src="https://github.com/user-attachments/assets/2960cdc6-5973-4dfc-8b74-55b1fdc86bff" />
+<img width="70%" alt="Screenshot 2026-06-17 at 21 07 08" src="https://github.com/user-attachments/assets/f349c3b8-2597-4cf8-99cd-d19821d85386" />
+
 
 ## Tools and Skills
 
