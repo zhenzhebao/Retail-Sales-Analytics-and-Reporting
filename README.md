@@ -16,7 +16,7 @@ Initially, Excel was chosen to clean the existing data and store it in a SQLite 
 Besides the entities from the online sales dataset, additional entities such as employees, category, campaign, and so on have been added to support a more realistic analysis.
 
 ### Entity Relationship Diagram (ERD)
-The following ERD illustrates the relational database structure used in this project. The database contains 12 strong entities. 2 associative entities were created to resolve many-to-many relationships between invoice and product, campaign and customers.
+The following ERD illustrates the relational database structure used in this project. The database contains twelve strong entities. Two associative entities were created to resolve many-to-many relationships between invoice and product, campaign and customers.
 
 The schema includes:
 
