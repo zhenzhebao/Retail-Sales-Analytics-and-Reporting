@@ -40,36 +40,57 @@ Initially, I chose SQLite as it allows me to focus on designing the database and
 
 During the migration, the data was transferred by exporting and importing CSV files, and incorrect data types were resolved before import into the database. I also adjusted the SQL syntax and used different functions in my existing schema and report scripts to ensure they work in PostgreSQL. Through this process, I learned about the differences in syntax among different variants of SQL.
 
-## Tools and Skills
+## Tools and skills 
 
 ### Database & Tools
 
-- SQL
-- DBeaver
-- Relational Database Design
-- Entity Relationship Diagram (ERD)
+-	PostgreSQL
+-	SQLite
+-	DBeaver
+  
+### Database Design
 
-### Database Design Concepts
+-	Relational Database Design
+-	Entity Relationship Diagram (ERD)
+-	Data Modeling
+-	Data Normalization
 
-- Data Normalization
-- Not Null Constraints
-- CHECK Constraints
+### Database Objects & Constraints
+
+-	NOT NULL Constraints
+-	CHECK Constraints
 -	Views
 -	Indexes
--	Triggers
+
 ### SQL Concepts
 
-- Joins
-- Aggregate Functions
-- Common Table Expressions (CTEs)
-- Subqueries
-- Window Functions
-- Ranking Functions
-- CASE Statements
-- EXISTS / NOT EXISTS
-- Date Functions
-- Data Cleaning and Validation
-- Query Performance Optimization
+-	Joins
+-	Aggregate Functions
+-	Common Table Expressions (CTEs)
+-	Subqueries
+-	Window Functions
+-	Ranking Functions
+-	CASE Statements
+-	Conditional Aggregation
+-	EXISTS / NOT EXISTS
+-	Date Functions
+-	Data Validation
+
+### Programming & ETL
+
+-	Python
+-	Pandas
+-	Excel
+-	Data Cleaning
+-	Data Transformation
+-	Data Type Conversion
+
+### Data Visualization
+
+-	Tableau
+-	Dashboard Development
+-	KPI Reporting
+
 
 ## SQL Reports and Analysis
 
