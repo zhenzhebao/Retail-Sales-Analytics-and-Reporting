@@ -93,6 +93,20 @@ Initially, I chose SQLite as it allows me to focus on designing the database and
 During the migration, the data was transferred by exporting and importing CSV files, and incorrect data types were resolved before import into the database. I also adjusted the SQL syntax and used different functions in my existing schema and report scripts to ensure they work in PostgreSQL. Through this process, I learned about the differences in syntax among different variants of SQL.
 
 
+## Analytics & Dashboard Development
+Initially, SQL reports were developed to reveal insights into sales trends and customer segmentation. Later on, SQL views were created to improve the reusability of the report during data visualization.
+
+**Sales Results Summary**
+
+Supporting Views
+- Sales KPI Summary View
+- Monthly Sales View
+  
+<img width="70%" alt="Screenshot 2026-06-20 at 14 12 11" src="https://github.com/user-attachments/assets/54c20528-d3b5-45c8-bb3b-84f91888f21d" />
+
+During the first 11 months of 2011, November generated the highest total revenue, while January generated the lowest.
+
+
 ## SQL Reports and Analysis
 
 ### Sales Data Analysis
