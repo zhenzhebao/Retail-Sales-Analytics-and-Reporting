@@ -1,4 +1,4 @@
-# Online Retail Sales Database
+# Retail Sales Analytics and Reporting
 ## Introduction
 
 This project demonstrates how to design a relational database in SQL, clean up the existing data in Excel and Python to import into the database, construct various SQL reports to reveal additional insights, and use Tableau to present the findings visually. 
