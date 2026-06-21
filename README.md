@@ -27,7 +27,6 @@ Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 -	NOT NULL Constraints
 -	CHECK Constraints
 -	Views
--	Indexes
 
 ### SQL Concepts
 
