@@ -129,3 +129,6 @@ Approximately half of all customers were classified as new customers, yet they c
 
 Loyal customers generated the majority of total revenue despite representing a smaller share of the customer base.
 
+## Product return analysis 
+
+This analysis highlights the overall product return patterns and examines returns from multiple perspectives, including customers, product categories, and individual products, to identify opportunities to reduce total returns and provide recommendations for further investigation.
