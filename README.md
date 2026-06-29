@@ -132,3 +132,21 @@ Loyal customers generated the majority of total revenue despite representing a s
 ## Product return analysis 
 
 This analysis highlights the overall product return patterns and examines returns from multiple perspectives, including customers, product categories, and individual products, to identify opportunities to reduce total returns and provide recommendations for further investigation.
+
+### Key Findings
+
+- Throughout the analysis period, return orders accounted for approximately 2% of all orders, while total return value represented approximately 4% of total sales.
+  
+- Return order volume increased over time, while total return value gradually declined.
+  
+- The U.K. accounted for 91.85% of the total return value.
+
+
+
+### Recommendations:
+
+- Prioritize investigating returns in the U.K. throughout the analysis period, as well as the spike in returns during April 2011, to identify the factors driving product returns and opportunities to reduce them.
+
+- Investigate customers who frequently return products and returning customers to identify common return patterns, understand the reasons behind the returns, and develop targeted strategies to reduce future returns.
+
+- Before considering whether to discontinue frequently returned products, compare their return value and return rate with total sales revenue and sales volume to determine whether the products remain profitable despite the high number of returns.
