@@ -38,6 +38,7 @@ Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 -	Ranking Functions
 -	CASE Statements
 -	Conditional Aggregation
+-	Conditional sorting using CASE in ORDER BY
 -	EXISTS / NOT EXISTS
 -	Date Functions
 -	Data Validation
