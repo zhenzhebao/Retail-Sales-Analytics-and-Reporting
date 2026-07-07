@@ -34,6 +34,11 @@ count(customer_id) as number_of_customers
 from customer_segmentation
 group by customer_segmentation)
 select customer_segmentation,total_revenue,number_of_customers,
-round(cast(total_revenue/nullif(number_of_customers,0)as numeric),2) as average_revenue_per_customers,
+round(cast(total_revenue/nullif(number_of_customers,0)as numeric),2) as average_revenue_per_customer,
 round(cast(number_of_customers*1.0/nullif(sum(number_of_customers) over(),0)*100 as numeric),2) as percentage_of_customer
-from t2;
+from t2
+order by case  when customer_segmentation='Loyal Customer' then 1
+			   when customer_segmentation='Returning Customer' then 2
+			   when customer_segmentation='New Customer' then 3
+			   else 4
+end;
