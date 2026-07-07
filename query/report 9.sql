@@ -40,7 +40,7 @@ select m.customer_id, ('non-member with membership record') as issue
 from membership m
 where m.customer_id in (select customer_id from customer where membership_flag='0')
 union all
-select customer_id, ('member without membership record') as issue
-from customer
-where membership_flag='1'
-and customer_id not in (select customer_id from membership);
+select c.customer_id, ('member without membership record') as issue
+from customer c
+where c.membership_flag='1' and
+not exists (select 1 from membership m where c.customer_id=m.customer_id);
