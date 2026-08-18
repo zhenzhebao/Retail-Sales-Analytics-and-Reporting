@@ -133,7 +133,7 @@ with t as (select pi.invoiceno,date(pi.invoicedate) as invoicedate,pp.stockcode,
 pe.employee_id,pp.unit_price as item_transaction_price,pip.quantity as item_quantity,
 round((pp.unit_price*pip.quantity)::numeric,2) as item_order_value,
 case
-	when (pp.unit_price*pip.quantity)<0 then true 
+	when pip.quantity<0 then true 
 	else False
 end as is_return
 from public.customer pc
