@@ -78,6 +78,9 @@ constraint fk_invoice_customer_id foreign key (customer_id)
 references customer (customer_id)
 );
 
+alter table invoice 
+add constraint fk_employee_id foreign key (employee_id) references employees (employee_id);
+
 -- department definition
 
 CREATE TABLE department (
@@ -100,7 +103,7 @@ references department (department_id)
 CREATE TABLE product(
 stockcode varchar(12) constraint stockcode_pk primary key,
 description varchar(200) not null,
-unit_price float(2) not null,
+unit_price numeric(10,2) not null,
 category_id int not null,
 constraint fk_category_id foreign key (category_id)
 references category (category_id)
@@ -135,30 +138,3 @@ references membership_type (membership_type_id),
 constraint fk_customer_id foreign key (customer_id)
 references customer(customer_id)
 );
-
-create table campaign(
-campaign_id int constraint campaign_pk primary key,
-campaign_name varchar(30) not null,
-campaign_type varchar(30) not null
-);
-
-create table customer_campaign(
-customer_campaign_id int constraint customer_campaign_pk primary key,
-sent_date date not null,
-opened char(1) not null,
-clicked char(1) not null,
-converted char(1) not null,
-conversion_amount float,
-unsubscribe char(1) not null,
-campaign_id int not null,
-customer_id int not null,
-constraint opened_check check (opened='Y' or opened='N'),
-constraint clicked_check check (clicked='Y' or clicked='N'),
-constraint converted_check check (converted='Y' or converted='N'),
-constraint unsubscribe_check check (unsubscribe='Y' or unsubscribe='N'));
-
-alter table customer_campaign
-add constraint fk_customer_id foreign key (customer_id)
-references customer (customer_id), 
-add constraint fk_campaign_id foreign key (campaign_id)
-references campaign (campaign_id);
