@@ -1,9 +1,14 @@
 # Retail Sales Analytics and Reporting
 ## Introduction
 
-This project demonstrates how to design a relational database in SQL, clean up the existing data in Excel and Python to import into the database, construct various SQL reports to reveal additional insights, and use Tableau to present the findings visually. 
+This project demonstrates how to design two different databases for different purposes: a relational database in PostgreSQL to store information efficiently and accurately, and a data warehouse in Snowflake using data warehousing concepts and a star schema to support analytical reporting. The original dataset was cleaned and prepared with Excel, and additional information was added to support more realistic analysis.
 
-The database is based on the online retail sales dataset; additional entities were added to create a more realistic analysis.
+An Entity-Relationship Diagram (ERD) was created by identifying the entities and relationships among them. Different database design techniques, such as associative entities, recursive relationship, and Supertype and subtype construct were implemented to represent business processes accurately. The tables were then created in PostgreSQL and the data was imported.
+
+For the data warehouse, I identified the analyses I planned to perform, the information required, and the grain of each row to design the star schema. Slowly Changing Dimension Type 2 (SCD Type 2) was incorporated into the design to potentially support tracking information changes over time. Basic administration and table creation were performed in Snowflake to prepare the environment, while data for the warehouse was prepared by querying the existing database in PostgreSQL.
+
+At the end of the project, various SQL reports were written using both databases to analyze retail sales performance from different perspectives, including overall trends, customers, products, and sales representatives.
+
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
