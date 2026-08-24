@@ -3,7 +3,7 @@
 
 This project demonstrates how to design two different databases for different purposes: a relational database in PostgreSQL to store information efficiently and accurately, and a data warehouse in Snowflake using data warehousing concepts and a star schema to support analytical reporting. The original dataset was cleaned and prepared with Excel, and additional information was added to support more realistic analysis.
 
-An Entity-Relationship Diagram (ERD) was created by identifying the entities and relationships among them. Different database design techniques, such as associative entities, recursive relationship, and Supertype and subtype construct were implemented to represent business processes accurately. The tables were then created in PostgreSQL and the data was imported.
+An Entity-Relationship Diagram (ERD) was created by identifying the entities and resolving relationships among them. Different database design techniques, such as associative entities, recursive relationship, and Supertype and subtype construct were implemented to represent business processes accurately. The tables were then created in PostgreSQL and the data was imported.
 
 For the data warehouse, I identified the analyses I planned to perform, the information required, and the grain of each row to design the star schema. Slowly Changing Dimension Type 2 (SCD Type 2) was incorporated into the design to potentially support tracking information changes over time. Basic administration and table creation were performed in Snowflake to prepare the environment, while data for the warehouse was prepared by querying the existing database in PostgreSQL.
 
