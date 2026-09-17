@@ -48,6 +48,7 @@ from t
 order by month;
 
 /* return by prodcut*/
+create view product_return_summary as 
 with t as (select stockcode,product_description,abs(sum(quantity)) as total_return_quantity,
 abs(sum(quantity*product_unit_price)) as total_return_value
 from all_return_data
