@@ -81,3 +81,73 @@ def get_product_return(metric=None,top_n=None):
                                     from product_return_summary
                                     where return_value_rank<={int(top_n)};'''
        return product_return_quantity_query,product_return_value_query
+
+def product_category_return(metric=None):
+  product_category_return_quantity_columns='product_category,total_return_quantity,return_quantity_rank'
+  product_category_return_value_columns='product_category,total_return_value,return_value_rank'
+  product_category_return_quantity_query=None
+  product_category_return_value_query=None
+  if metric is None:
+     metric='both'
+  if metric not in ('return_quantity','return_value','both'):
+     raise Exception ("Invalid metric selection")
+  else:
+     if metric=='both':
+        product_category_return_quantity_query=f'''select {product_category_return_quantity_columns}
+                                                  from product_category_return_summary;'''
+        product_category_return_value_query=f'''select {product_category_return_value_columns}
+                                                from product_category_return_summary;'''
+     elif metric=='return_quantity':
+          product_category_return_quantity_query=f'''select {product_category_return_quantity_columns}
+                                                     from product_category_return_summary;'''
+     elif metric=='return_value':
+          product_category_return_value_query=f'''select {product_category_return_value_columns}
+                                                from product_category_return_summary;'''
+  return product_category_return_quantity_query,product_category_return_value_query
+
+def product_department_return(metric=None):
+  product_department_return_quantity_columns='product_department,total_return_quantity,return_quantity_rank'
+  product_department_return_value_columns='product_department,total_return_value,return_value_rank'
+  product_department_return_quantity_query=None
+  product_department_return_value_query=None
+  if metric is None:
+     metric='both'
+  if metric not in ('return_quantity','return_value','both'):
+     raise Exception ("Invalid metric selection")
+  else:
+     if metric=='both':
+        product_department_return_quantity_query=f'''select {product_department_return_quantity_columns}
+                                                   from product_department_return_summary;'''
+        product_department_return_value_query=f'''select {product_department_return_value_columns}
+                                                from product_department_return_summary;'''
+     elif metric=='return_quantity':
+          product_department_return_quantity_query=f'''select {product_department_return_quantity_columns}
+                                                   from product_department_return_summary;'''
+     elif metric=='return_value':
+          product_department_return_value_query=f'''select {product_department_return_value_columns}
+                                                from product_department_return_summary;'''
+  return product_department_return_quantity_query,product_department_return_value_query
+
+def customer_return_value(top_n=10):
+  try:
+    int(top_n)
+  except (ValueError,TypeError):
+    raise Exception ("Invalid top_n value")
+  if type(top_n)==float or type(top_n)==bool or int(top_n)<=0:
+     raise Exception('Invalid top_n value')
+  else: query=f'''select customer_id,total_return_value,return_value_rank
+                  from customer_return_summary
+                  where return_value_rank<={int(top_n)};'''
+  return query
+
+def country_return_value(top_n=10):
+  try:
+    int(top_n)
+  except (ValueError,TypeError):
+    raise Exception ("Invalid top_n value")
+  if type(top_n)==float or type(top_n)==bool or int(top_n)<=0:
+     raise Exception('Invalid top_n value')
+  else: query=f'''select country,total_return_value,return_value_rank
+                  from country_return_summary
+                  where return_value_rank<={int(top_n)};'''
+  return query
