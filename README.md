@@ -7,8 +7,9 @@ An Entity-Relationship Diagram (ERD) was created by identifying the entities and
 
 For the data warehouse, I identified the analyses I planned to perform, the information required, and the grain of each row to design the star schema. Slowly Changing Dimension Type 2 (SCD Type 2) was incorporated into the design to potentially support tracking information changes over time. Basic administration and table creation were performed in Snowflake to prepare the environment, while data for the warehouse was prepared by querying the existing database in PostgreSQL.
 
-At the end of the project, various SQL reports were written using both databases to analyze retail sales performance from different perspectives, including overall trends, customers, products, and sales representatives.
+As part of the project, various SQL reports were written using both databases to analyze retail sales performance from different perspectives, including overall trends, customers, products, and sales representatives.
 
+Currently, I am exploring how to use an AI agent to analyze returns and summarize the findings in a report.
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
