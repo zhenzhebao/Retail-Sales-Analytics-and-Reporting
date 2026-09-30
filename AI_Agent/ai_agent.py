@@ -1,4 +1,9 @@
+from google.colab import userdata
+api_key=userdata.get('OPENAI_API_KEY')
+
+!pip install openai
 from datetime import date
+from openai import OpenAI
 
 """## Python Functions"""
 
@@ -154,11 +159,10 @@ def country_return_value(top_n=10):
                   where return_value_rank<={int(top_n)};'''
   return query
 
-"""## Tool Definitions"""
+"""## Tool Definitions and System Prompt"""
 
 get_monthly_return={
 "type":"function",
-"function":{
 "name":"get_monthly_return",
 "description":"Returns monthly return information, including month, total return quantity, and total return value in one dataset.",
 "parameters":{
@@ -194,11 +198,9 @@ get_monthly_return={
     }
 }
 }
-}
 
 get_product_return={
   "type": "function",
-  "function": {
     "name": "get_product_return",
     "description": "Returns a product level summary of return quantity, return value, or both, with respective rankings. Each product includes its stock code and product description.",
     "parameters": {
@@ -218,11 +220,10 @@ get_product_return={
       }
     }
   }
-}
+
 
 product_category_return={
 "type":"function",
-"function":{
 "name":"product_category_return",
 "description":"Returns a summary of returns by product category based on return quantity, return value, or both, with respective rankings.",
 "parameters":{
@@ -237,11 +238,9 @@ product_category_return={
  }
 }
 }
-}
 
 product_department_return={
  "type":"function",
- "function":{
   "name":"product_department_return",
   "description":"Returns a summary of returns by product department based on return quantity, return value, or both, with respective rankings.",
   "parameters":{
@@ -256,11 +255,9 @@ product_department_return={
   }
   }
  }
-}
 
 customer_return_value={
 "type":"function",
-"function":{
 "name":"customer_return_value",
 "description":"Returns customer-level return values and their rankings. Each customer is identified by customer_id.",
 "parameters":{
@@ -275,11 +272,9 @@ customer_return_value={
 }
 }
 }
-}
 
 country_return_value={
 "type":"function",
-"function":{
 "name":"country_return_value",
 "description":"Returns a summary of total return value by country with respective rankings.",
 "parameters":{
@@ -294,6 +289,60 @@ country_return_value={
 }
 }
 }
-}
 
 tools=[get_monthly_return,get_product_return,product_category_return,product_department_return,customer_return_value,country_return_value]
+
+system_prompt="""
+Database Description:
+The database contains records from December 2010 through December 2011. Each row represents a customer's purchase of a product with a specific quantity. A negative quantity represents a return.
+You only have access to the all_return_data view, which contains all return records from the same period.
+The view contains no duplicate records, and product_unit_price contains no missing or negative values.
+
+The all_return_data view contains the following columns:
+customer_id, customer_name, customer_country, membership_type,invoiceno, invoicedate, quantity,
+stockcode, product_description,product_unit_price, product_category, product_department
+
+Metric Definitions:
+Return quantity and return value must be reported as positive numbers.
+Ranking metrics are sorted in descending order.
+
+Available Tools:
+Return quantity and return value are presented as positive numbers in tool results. Unless otherwise specified, tools that return both metrics provide return quantity and return value results separately.
+
+Goal:
+You are an analyst responsible for analyzing sales return patterns from different perspectives using the available tools and data. Once the investigation is complete, provide a concise report summarizing your findings.
+
+Instructions:
+For analysis, you may use the available tools or construct SQL queries. Only construct a SQL query when the available tools do not provide the information required for the analysis. Do not write SQL queries solely to verify results returned by the available tools.
+Do not list known facts from the provided information as assumptions. Do not make assumptions about unavailable information, unclear definitions, or undefined metrics.
+
+Before conducting the analysis, present the following for human approval:
+- The proposed analysis plan.
+- The tools you plan to use.
+- The parameter values for each proposed tool call.
+- The complete SQL code for any proposed custom SQL query.
+- The metric definitions relevant to the analysis.
+
+List any important assumptions requiring human approval in a separate section. If no assumptions are required, explicitly state that no assumptions are being made.
+After approval, you may change the analytical approach if newly available information indicates that the original plan is insufficient or inappropriate.
+In the final report, include any assumptions made during the analysis and definitions of the metrics used. If an analysis does not reveal a meaningful pattern, it does not need to be included in the final report.
+You are prohibited from modifying or deleting data in the database.
+
+"""
+
+"""## AI Agent"""
+
+client=OpenAI(api_key=api_key)
+
+try:
+  response=client.responses.create(
+	    model="gpt-5.6-luna",
+	    instructions=system_prompt,
+	    input="Analyze returns"
+)
+except openai.AuthenticationError:
+  raise Exception ("Invalid API key")
+except openai.APIConnectionError:
+  raise Exception ("Network connection issue")
+except openai.APIStatusError:
+  raise Exception ("API Error")
