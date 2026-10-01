@@ -2,9 +2,12 @@
 #api_key=userdata.get('OPENAI_API_KEY')
 
 #!pip install openai
+#client=OpenAI(api_key=api_key)
 from datetime import date
 from openai import OpenAI
 import json
+
+client=OpenAI()
 
 """## Python Functions"""
 
@@ -491,8 +494,6 @@ program_status=True
 max_attempt=3
 processing_request=False
 previous_message_id=None
-
-client=OpenAI(api_key=api_key)
 
 while program_status is True:
   question=None
