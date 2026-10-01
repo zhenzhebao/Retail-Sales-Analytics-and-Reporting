@@ -1,7 +1,7 @@
-from google.colab import userdata
-api_key=userdata.get('OPENAI_API_KEY')
+#from google.colab import userdata
+#api_key=userdata.get('OPENAI_API_KEY')
 
-!pip install openai
+#!pip install openai
 from datetime import date
 from openai import OpenAI
 import json
