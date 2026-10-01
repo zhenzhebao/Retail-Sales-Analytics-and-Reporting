@@ -4,6 +4,7 @@ api_key=userdata.get('OPENAI_API_KEY')
 !pip install openai
 from datetime import date
 from openai import OpenAI
+import json
 
 """## Python Functions"""
 
@@ -330,19 +331,210 @@ You are prohibited from modifying or deleting data in the database.
 
 """
 
+"""## Question classification prompt and response format"""
+
+question_classifier_prompt="""You are a classification assistant responsible for determining whether a user's request is asking for data analysis. Respond only with "yes" or "no".
+                      Respond "yes" if the user's request asks to analyze, investigate, compare, summarize, identify patterns or trends, calculate metrics, or answer questions using data.
+
+                      Respond "no" if the request:
+                      - Is unrelated to data analysis.
+                      - Only asks for an explanation of a data analysis, database, statistical, or programming concept.
+                      - Is unclear or cannot be understood.
+                      - Contains programming or SQL code.
+                      - Asks you to write, generate, modify, debug, or execute programming or SQL code."""
+
+question_classifer_answer_format={
+"format":{
+"type":"json_schema",
+"name":"question_classifier",
+"strict":True,
+"schema":{
+    "type":"object",
+    "properties":{
+        "answer":{
+            "type":"string",
+            "enum":["yes","no"]
+        }
+    },
+    "required":["answer"],
+    "additionalProperties":False
+}
+}
+}
+
+"""## Function to process user questions"""
+
+# classify user question to ensure it is irrelevant
+def question_classifcation(question):
+    try:
+        response=client.responses.create(
+                model="gpt-6-luna",
+                instructions=question_classifier_prompt,
+                text=question_classifer_answer_format,
+                input=question)
+    except openai.AuthenticationError:
+           raise Exception ("Invalid API key")
+    except openai.APIConnectionError:
+           raise Exception ("Network connection issue")
+    except openai.APIStatusError:
+           raise Exception ("API Error")
+    if response.status=='completed':
+        for item in response.output:
+            if item.type=='message':
+              result=item.model_dump()
+              if 'status' in result.keys():
+                  if result['status']=='completed':
+                      result=json.loads(response.output_text)
+                      if 'answer' not in result.keys():
+                          raise Exception ("Incorrect Format.")
+                      elif str.lower(result['answer']) not in ('yes','no'):
+                          raise Exception ("Incorrect Format.")
+                      result=str.lower(result['answer'])
+                      #print(result)
+                      return result
+                  else:
+                      raise Exception ("Incomplete LLM Response")
+              else:
+                  raise Exception ("Incomplete LLM Response")
+    else:
+          raise Exception ("Incomplete LLM Response")
+
+# Process the question for the first time
+def first_time_question_process(question):
+    try:
+        response=client.responses.create(
+            model="gpt-5.6-luna",
+            instructions=system_prompt,
+            input=question,
+            tools=tools)
+    except openai.AuthenticationError:
+          raise Exception ("Invalid API key")
+    except openai.APIConnectionError:
+          raise Exception ("Network connection issue")
+    except openai.APIStatusError:
+          raise Exception ("API Error")
+    if response.status=='completed':
+        for item in response.output:
+            if item.type=='message':
+                result=item.model_dump()
+                if 'status' in result.keys():
+                    if result['status']=='completed':
+                          #print('Response is good')
+                          result=response.output_text
+                          message_id=response.id
+                          #print(result)
+                          #print(message_id)
+                          return result,message_id
+                    else:
+                        raise Exception ("Incompleted LLM Response")
+                else:
+                    raise Exception ("Incompleted LLM Response")
+            else:
+              continue
+    else:
+       raise Exception ("Incompleted LLM Response")
+
+# Process follow up response or tool calls
+def user_question_processing(question,previous_message_id):
+      function_calls=[]
+      try:
+          response=client.responses.create(
+            model="gpt-5.6-luna",
+            previous_response_id=previous_message_id,
+            instructions=system_prompt,
+            input=question,
+            tools=tools)
+      except openai.AuthenticationError:
+            raise Exception ("Invalid API key")
+      except openai.APIConnectionError:
+            raise Exception ("Network connection issue")
+      except openai.APIStatusError:
+            raise Exception ("API Error")
+
+      message_id=response.id
+      if response.status=='completed':
+          for item in response.output:
+              if item.type=='function_call':
+                  result=item.model_dump()
+                  if 'status' in result.keys():
+                      if result['status']=='completed':
+                            #print(result)
+                            function_call={}
+                            for key in result.keys():
+                                if key=='arguments':
+                                  #print(key)
+                                  #print(result[key])
+                                  function_call.update({key:result[key]})
+                                elif key=='call_id':
+                                  #print(key)
+                                  #print(result[key])
+                                  function_call.update({key:result[key]})
+                                elif key=='name':
+                                  #print(key)
+                                  #print(result[key])
+                                  function_call.update({key:result[key]})
+                            function_calls.append(function_call)
+                            #print(function_call)
+                            #print(function_calls)
+                      else:
+                            raise Exception ("Incomplete LLM Response")
+                  else:
+                        raise Exception ("Incomplete LLM Response")
+      else:
+           raise Exception ("Incomplete LLM Response")
+      return function_calls,message_id
+
 """## AI Agent"""
+
+first_run=True
+program_status=True
+max_attempt=3
+processing_request=False
+previous_message_id=None
 
 client=OpenAI(api_key=api_key)
 
-try:
-  response=client.responses.create(
-	    model="gpt-5.6-luna",
-	    instructions=system_prompt,
-	    input="Analyze returns"
-)
-except openai.AuthenticationError:
-  raise Exception ("Invalid API key")
-except openai.APIConnectionError:
-  raise Exception ("Network connection issue")
-except openai.APIStatusError:
-  raise Exception ("API Error")
+while program_status is True:
+  question=None
+  if max_attempt==0:
+     print("Too many irrelevant questions. The program has been stopped.")
+     break
+  else:
+     if first_run is True:
+        print("Type exit to exit the program or help for more information.")
+        first_run=False
+     if processing_request is False:
+           question=input("What kind of analysis do you want to perform:")
+     elif processing_request is True:
+           question=input("\nWhat's your response:")
+     #print(question)
+     if str.lower(question)=='exit':
+      print("The program has been stopped.")
+      break
+     elif str.lower(question)=='help':
+      print("Type exit to exit the program or ask a question to perform data analysis.")
+      continue
+     else:
+          if processing_request is False:
+              print("\nQuestion Classification")
+              result=question_classifcation(question)
+              #print(result)
+              if result=='yes':
+                  print('This is a relevant question.')
+                  processing_request=True
+                  result,previous_message_id=first_time_question_process(question)
+                  print(f"\nUser question: {question}")
+                  print('LLM Response:\n')
+                  print(result)
+                  #print(previous_message_id)
+              elif result=='no':
+                    max_attempt=max_attempt-1
+                    if max_attempt==0:
+                      continue
+                    else:
+                        print(f"This question is not relevant to Data Analysis, please try it again. You have {max_attempt} chances to rety.")
+          else:
+                print("\nLLM Starts to process requests.")
+                llm_response,previous_message_id=user_question_processing(question,previous_message_id)
+                print(llm_response)
+                print(previous_message_id)
