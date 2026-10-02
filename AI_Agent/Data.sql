@@ -22,18 +22,36 @@ on me.customer_id=c.customer_id
 left join membership_type mt
 on mt.membership_type_id=me.membership_type_id;
 
-create view all_sales_data as 
-select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
-quantity,stockcode,product_description,product_unit_price,product_category,product_department
-from all_retail_data
-where quantity>0;
-
 create view all_return_data as 
-select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
+with t as (select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
 quantity,stockcode,product_description,product_unit_price,product_category,product_department
 from all_retail_data
-where quantity<0;
+where quantity<0),
+t2 as (select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
+quantity,stockcode,product_description,product_unit_price,product_category,product_department,
+row_number() over(partition by customer_id, customer_name, customer_country, membership_type,
+invoiceno, invoicedate, quantity,stockcode, product_description, 
+product_unit_price, product_category, product_department) as ranking
+from t)
+/* Confirmed that both flagged records are duplicates.
+   Keep only the first occurrence of each identical record using ranking = 1.
+select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
+quantity,stockcode,product_description,product_unit_price,product_category,product_department,ranking
+from t2
+where ranking=2;
 
-/* validate the number of records in all sales and all return to see if that matches all retail records*/
-select count(*)-(select count(*) from all_sales_data)-(select count(*) from all_return_data)
-from all_retail_data;
+select *
+from t2
+where customer_id=16029 and invoiceno='C570556' and stockcode='22273';*/
+/*select *
+from t2
+where customer_id=17850 and invoiceno='C543611' and stockcode='21730';*/
+select customer_id,customer_name,customer_country,membership_type,invoiceno,invoicedate,
+quantity,stockcode,product_description,product_unit_price,product_category,product_department
+from t2
+where ranking=1;
+
+/* No records with 0 or negative price*/
+select count(*) 
+from all_return_data
+where product_unit_price<=0;

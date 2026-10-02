@@ -6,6 +6,8 @@
 from datetime import date
 from openai import OpenAI
 import json
+import os
+import psycopg
 
 client=OpenAI()
 
@@ -494,6 +496,11 @@ program_status=True
 max_attempt=3
 processing_request=False
 previous_message_id=None
+
+conn=psycopg.connect(host=os.environ["DB_HOST"],
+                     dbname=os.environ["DB_NAME"],
+                     user=os.environ["DB_USER"],
+                     password=os.environ["DB_PASSWORD"])
 
 while program_status is True:
   question=None
