@@ -523,12 +523,14 @@ max_attempt=3
 processing_request=False
 previous_message_id=None
 
-conn=psycopg.connect(host=os.environ["DB_HOST"],
-                     dbname=os.environ["DB_NAME"],
-                     user=os.environ["DB_USER"],
-                     password=os.environ["DB_PASSWORD"],
-                     connect_timeout=5)
-
+try:
+    conn=psycopg.connect(host=os.environ["DB_HOST"],
+                        dbname=os.environ["DB_NAME"],
+                        user=os.environ["DB_USER"],
+                        password=os.environ["DB_PASSWORD"],
+                        connect_timeout=5)
+except psycopg.Error:
+       raise Exception("Database related error, unable to connect to Database.")
 while program_status is True:
   question=None
   if max_attempt==0:
@@ -571,11 +573,12 @@ while program_status is True:
           else:
                 print("\nLLM Starts to process requests.")
                 llm_response,previous_message_id=user_question_processing(question,previous_message_id)
-                print(llm_response)
-                print(previous_message_id)
+                #print(llm_response)
+                #print(previous_message_id)
+                tool_results={}
                 query_result={}
                 for item in llm_response:
-                    print(item)
+                    #print(item)
                     #print(item["name"])
                     if item["name"] in ("get_monthly_return","customer_return_value",'country_return_value'):
                           #print('++++++++++++++++++++++++++')
@@ -586,28 +589,34 @@ while program_status is True:
                           if item['name']=="get_monthly_return":
                               #print(item['arguments']['start_year'],item['arguments']['start_month'],
                               #      item['arguments']['end_year'],print(item['arguments']['end_month'])
-                              start_month,end_month=generate_date_value(item['arguments']['start_year'],item['arguments']['start_month'],
+                              if item['arguments']['start_year'] is not None and item['arguments']['start_month'] is not None and item['arguments']['end_year'] is not None and item['arguments']['end_month'] is not None:
+                                    start_month,end_month=generate_date_value(item['arguments']['start_year'],item['arguments']['start_month'],
                                                                         item['arguments']['end_year'],item['arguments']['end_month'])
-                              #print("start_month:", start_month,"end_month:", end_month)
-                              query=get_monthly_return(start_month,end_month)
+                                    #print("start_month:", start_month,"end_month:", end_month)
+                                    query=get_monthly_return(start_month,end_month)
+                              elif item['arguments']['start_year'] is None and item['arguments']['start_month'] is None and item['arguments']['end_year'] is None and item['arguments']['end_month'] is None:
+                                    query=get_monthly_return()
                           elif item["name"]=="customer_return_value":
                                query=customer_return_value(top_n=item["arguments"]["top_n"])
                           elif item["name"]=='country_return_value':
                                query=country_return_value(top_n=item['arguments']['top_n'])
                           #print(query)
-                          with conn.cursor() as cur:
-                               cur.execute(query)
-                               data=cur.fetchall()
-                               #print(data)
+                          try:
+                                with conn.cursor() as cur:
+                                    cur.execute(query)
+                                    data=cur.fetchall()
+                                    #print(data)
+                          except psycopg.Error:
+                                raise Exception("Database related error")
                           query_result.update({item['call_id']:data})
-                          print(query_result)
+                          #print(query_result)
                     elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
                          #print('+++++++++++++++++++++++++++++++++')
                          #print(item["name"])
                          query=None
                          data={}
                          #print(item["arguments"])
-                         print(item["call_id"])
+                         #print(item["call_id"])
                          if item["name"] =="get_product_return":
                               query=get_product_return(metric=item["arguments"]["metric"],top_n=item["arguments"]["top_n"])
                          elif item["name"] =='product_category_return':
@@ -616,13 +625,21 @@ while program_status is True:
                               query=product_department_return(metric=item["arguments"]["metric"])
                          #print(query)
                          for key in query.keys():
+                              query_data=None
                               if query[key] is not None:
                                  query_name=key+'_data'
                                  #print(query_name)
                                  #print(query[key])
-                                 with conn.cursor() as cur:
-                                      cur.execute(query[key])
-                                      data.update({query_name:cur.fetchall()})
+                                 try:
+                                    with conn.cursor() as cur:
+                                        cur.execute(query[key])
+                                        query_data=cur.fetchall()
+                                 except psycopg.Error:
+                                        raise Exception("Database related error")
+                                 data.update({query_name:query_data})
                          query_result.update({item['call_id']:data})
                          #print(query_result)
+                tool_results.update({"previous_message_id":previous_message_id})
+                tool_results.update({"query_result":query_result})
+                print(tool_results)
 
