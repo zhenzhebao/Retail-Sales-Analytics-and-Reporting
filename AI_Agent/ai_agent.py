@@ -60,6 +60,7 @@ def get_monthly_return(start_month=None,end_month=None):
     return query
 
 def get_product_return(metric=None,top_n=None):
+  query={}
   if metric is None:
      metric='both'
   if top_n is None:
@@ -83,19 +84,24 @@ def get_product_return(metric=None,top_n=None):
      product_return_value_query=f'''select stockcode,product_description,{product_return_value_columns}
                                     from product_return_summary
                                     where return_value_rank<={int(top_n)};'''
-     return product_return_quantity_query,product_return_value_query
+     query.update({"product_return_quantity_query":product_return_quantity_query})
+     query.update({"product_return_value_query":product_return_value_query})
   elif metric=='return_quantity':
        product_return_quantity_query=f'''select stockcode,product_description,{product_return_quantity_columns}
                                       from product_return_summary
                                       where return_quantity_rank<={int(top_n)};'''
-       return product_return_quantity_query,product_return_value_query
+       query.update({"product_return_quantity_query":product_return_quantity_query})
+       query.update({"product_return_value_query":None})
   elif metric=='return_value':
        product_return_value_query=f'''select stockcode,product_description,{product_return_value_columns}
                                     from product_return_summary
                                     where return_value_rank<={int(top_n)};'''
-       return product_return_quantity_query,product_return_value_query
+       query.update({"product_return_quantity_query":None})
+       query.update({"product_return_value_query":product_return_value_query})
+  return query
 
 def product_category_return(metric=None):
+  query={}
   product_category_return_quantity_columns='total_return_quantity,return_quantity_rank'
   product_category_return_value_columns='total_return_value,return_value_rank'
   product_category_return_quantity_query=None
@@ -110,15 +116,22 @@ def product_category_return(metric=None):
                                                   from product_category_return_summary;'''
         product_category_return_value_query=f'''select product_category, {product_category_return_value_columns}
                                                 from product_category_return_summary;'''
+        query.update({"product_category_return_quantity_query":product_category_return_quantity_query})
+        query.update({"product_category_return_value_query":product_category_return_value_query})
      elif metric=='return_quantity':
           product_category_return_quantity_query=f'''select product_category,{product_category_return_quantity_columns}
                                                      from product_category_return_summary;'''
+          query.update({"product_category_return_quantity_query":product_category_return_quantity_query})
+          query.update({"product_category_return_value_query":None})
      elif metric=='return_value':
           product_category_return_value_query=f'''select product_category,{product_category_return_value_columns}
                                                 from product_category_return_summary;'''
-  return product_category_return_quantity_query,product_category_return_value_query
+          query.update({"product_category_return_quantity_query":None})
+          query.update({"product_category_return_value_query":product_category_return_value_query})
+  return query
 
 def product_department_return(metric=None):
+  query={}
   product_department_return_quantity_columns='total_return_quantity,return_quantity_rank'
   product_department_return_value_columns='total_return_value,return_value_rank'
   product_department_return_quantity_query=None
@@ -133,19 +146,28 @@ def product_department_return(metric=None):
                                                    from product_department_return_summary;'''
         product_department_return_value_query=f'''select product_department,{product_department_return_value_columns}
                                                 from product_department_return_summary;'''
+        query.update({"product_department_return_quantity_query":product_department_return_quantity_query})
+        query.update({"product_department_return_value_query":product_department_return_value_query})
      elif metric=='return_quantity':
           product_department_return_quantity_query=f'''select product_department,{product_department_return_quantity_columns}
                                                    from product_department_return_summary;'''
+          query.update({"product_department_return_quantity_query":product_department_return_quantity_query})
+          query.update({"product_department_return_value_query":None})
      elif metric=='return_value':
           product_department_return_value_query=f'''select product_department,{product_department_return_value_columns}
                                                 from product_department_return_summary;'''
-  return product_department_return_quantity_query,product_department_return_value_query
+          query.update({"product_department_return_quantity_query":None})
+          query.update({"product_department_return_value_query":product_department_return_value_query})
+  return query
 
-def customer_return_value(top_n=10):
-  try:
-    int(top_n)
-  except (ValueError,TypeError):
-    raise Exception ("Invalid top_n value")
+def customer_return_value(top_n=None):
+  if top_n is None:
+     top_n=10
+  else:
+      try:
+        int(top_n)
+      except (ValueError,TypeError):
+        raise Exception ("Invalid top_n value")
   if type(top_n)==float or type(top_n)==bool or int(top_n)<=0:
      raise Exception('Invalid top_n value')
   else: query=f'''select customer_id,total_return_value,return_value_rank
@@ -153,11 +175,14 @@ def customer_return_value(top_n=10):
                   where return_value_rank<={int(top_n)};'''
   return query
 
-def country_return_value(top_n=10):
-  try:
-    int(top_n)
-  except (ValueError,TypeError):
-    raise Exception ("Invalid top_n value")
+def country_return_value(top_n=None):
+  if top_n is None:
+     top_n=10
+  else:
+      try:
+        int(top_n)
+      except (ValueError,TypeError):
+        raise Exception ("Invalid top_n value")
   if type(top_n)==float or type(top_n)==bool or int(top_n)<=0:
      raise Exception('Invalid top_n value')
   else: query=f'''select country,total_return_value,return_value_rank
@@ -167,7 +192,7 @@ def country_return_value(top_n=10):
 
 """## Tool Definitions and System Prompt"""
 
-get_monthly_return={
+get_monthly_return_tool={
 "type":"function",
 "name":"get_monthly_return",
 "description":"Returns monthly return information, including month, total return quantity, and total return value in one dataset.",
@@ -205,7 +230,7 @@ get_monthly_return={
 }
 }
 
-get_product_return={
+get_product_return_tool={
   "type": "function",
     "name": "get_product_return",
     "description": "Returns a product level summary of return quantity, return value, or both, with respective rankings. Each product includes its stock code and product description.",
@@ -228,7 +253,7 @@ get_product_return={
   }
 
 
-product_category_return={
+product_category_return_tool={
 "type":"function",
 "name":"product_category_return",
 "description":"Returns a summary of returns by product category based on return quantity, return value, or both, with respective rankings.",
@@ -245,7 +270,7 @@ product_category_return={
 }
 }
 
-product_department_return={
+product_department_return_tool={
  "type":"function",
   "name":"product_department_return",
   "description":"Returns a summary of returns by product department based on return quantity, return value, or both, with respective rankings.",
@@ -262,7 +287,7 @@ product_department_return={
   }
  }
 
-customer_return_value={
+customer_return_value_tool={
 "type":"function",
 "name":"customer_return_value",
 "description":"Returns customer-level return values and their rankings. Each customer is identified by customer_id.",
@@ -279,7 +304,7 @@ customer_return_value={
 }
 }
 
-country_return_value={
+country_return_value_tool={
 "type":"function",
 "name":"country_return_value",
 "description":"Returns a summary of total return value by country with respective rankings.",
@@ -296,7 +321,8 @@ country_return_value={
 }
 }
 
-tools=[get_monthly_return,get_product_return,product_category_return,product_department_return,customer_return_value,country_return_value]
+tools=[get_monthly_return_tool,get_product_return_tool,product_category_return_tool,
+       product_department_return_tool,customer_return_value_tool,country_return_value_tool]
 
 system_prompt="""
 Database Description:
@@ -469,7 +495,7 @@ def user_question_processing(question,previous_message_id):
                                 if key=='arguments':
                                   #print(key)
                                   #print(result[key])
-                                  function_call.update({key:result[key]})
+                                  function_call.update({key:json.loads(result[key])})
                                 elif key=='call_id':
                                   #print(key)
                                   #print(result[key])
@@ -500,7 +526,8 @@ previous_message_id=None
 conn=psycopg.connect(host=os.environ["DB_HOST"],
                      dbname=os.environ["DB_NAME"],
                      user=os.environ["DB_USER"],
-                     password=os.environ["DB_PASSWORD"])
+                     password=os.environ["DB_PASSWORD"],
+                     connect_timeout=5)
 
 while program_status is True:
   question=None
@@ -546,3 +573,56 @@ while program_status is True:
                 llm_response,previous_message_id=user_question_processing(question,previous_message_id)
                 print(llm_response)
                 print(previous_message_id)
+                query_result={}
+                for item in llm_response:
+                    print(item)
+                    #print(item["name"])
+                    if item["name"] in ("get_monthly_return","customer_return_value",'country_return_value'):
+                          #print('++++++++++++++++++++++++++')
+                          #print(item['name'])
+                          #print(item['call_id'])
+                          query=None
+                          data=None
+                          if item['name']=="get_monthly_return":
+                              #print(item['arguments']['start_year'],item['arguments']['start_month'],
+                              #      item['arguments']['end_year'],print(item['arguments']['end_month'])
+                              start_month,end_month=generate_date_value(item['arguments']['start_year'],item['arguments']['start_month'],
+                                                                        item['arguments']['end_year'],item['arguments']['end_month'])
+                              #print("start_month:", start_month,"end_month:", end_month)
+                              query=get_monthly_return(start_month,end_month)
+                          elif item["name"]=="customer_return_value":
+                               query=customer_return_value(top_n=item["arguments"]["top_n"])
+                          elif item["name"]=='country_return_value':
+                               query=country_return_value(top_n=item['arguments']['top_n'])
+                          #print(query)
+                          with conn.cursor() as cur:
+                               cur.execute(query)
+                               data=cur.fetchall()
+                               #print(data)
+                          query_result.update({item['call_id']:data})
+                          print(query_result)
+                    elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
+                         #print('+++++++++++++++++++++++++++++++++')
+                         #print(item["name"])
+                         query=None
+                         data={}
+                         #print(item["arguments"])
+                         print(item["call_id"])
+                         if item["name"] =="get_product_return":
+                              query=get_product_return(metric=item["arguments"]["metric"],top_n=item["arguments"]["top_n"])
+                         elif item["name"] =='product_category_return':
+                              query=product_category_return(metric=item["arguments"]["metric"])
+                         elif item["name"] =='product_department_return':
+                              query=product_department_return(metric=item["arguments"]["metric"])
+                         #print(query)
+                         for key in query.keys():
+                              if query[key] is not None:
+                                 query_name=key+'_data'
+                                 #print(query_name)
+                                 #print(query[key])
+                                 with conn.cursor() as cur:
+                                      cur.execute(query[key])
+                                      data.update({query_name:cur.fetchall()})
+                         query_result.update({item['call_id']:data})
+                         #print(query_result)
+
