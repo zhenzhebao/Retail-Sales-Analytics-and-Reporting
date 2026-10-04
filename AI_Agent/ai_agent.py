@@ -546,6 +546,21 @@ def clean_query_data(query_data):
           raise Exception("Unexcpeted return Data Structure")
     return clean_data
 
+# format the tool results as proper LLM input 
+def prepare_return_tool_results(call_ids,tool_results):
+    input=[]
+    for call_id in call_ids:
+      #print(call_id)
+      #print(tool_results['query_result'][call_id])
+      result={
+          "type":"function_call_output",
+          "call_id":call_id,
+          "output":json.dumps(tool_results['query_result'][call_id])
+          }
+      #print(result)
+      input.append(result)
+    return input
+
 """## AI Agent"""
 
 first_run=True
@@ -609,6 +624,7 @@ while program_status is True:
                 #print(previous_message_id)
                 tool_results={}
                 query_result={}
+                call_ids=[]
                 for item in llm_response:
                     #print(item)
                     #print(item["name"])
@@ -641,6 +657,7 @@ while program_status is True:
                           except psycopg.Error:
                                 raise Exception("Database related error")
                           clean_data=clean_query_data(data)
+                          call_ids.append(item['call_id'])
                           query_result.update({item['call_id']:clean_data})
                           #print('===========================================')
                           #print(clean_data)
@@ -680,11 +697,26 @@ while program_status is True:
                                  #print(len(clean_data))
                                  #print('+++++++++++++++++++++++++++++++++')
                                  data.update({query_name:clean_data})
+                         call_ids.append(item['call_id'])
                          query_result.update({item['call_id']:data})
                          #print(query_result)
                 tool_results.update({"previous_message_id":previous_message_id})
                 tool_results.update({"query_result":query_result})
                 print('=============================================')
+                print('Call ID')
+                print(call_ids)
                 print("Tool results")
                 print(tool_results)
-
+                previous_message_id=tool_results['previous_message_id']
+                return_results=prepare_return_tool_results(call_ids,tool_results)
+                llm_response=client.responses.create(
+                    model="gpt-5.6-luna",
+                    previous_response_id=previous_message_id,
+                    instructions=system_prompt,
+                    input=return_results,
+                    tools=tools)
+                print('================================================')
+                print("LLM Return response")
+                print(llm_response)
+                print("=================================================")
+                print(llm_response.output_text)
