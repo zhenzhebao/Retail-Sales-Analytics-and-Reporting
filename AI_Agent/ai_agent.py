@@ -8,6 +8,9 @@ from openai import OpenAI
 import json
 import os
 import psycopg
+from psycopg.rows import dict_row
+import datetime
+from decimal import Decimal
 
 client=OpenAI()
 
@@ -393,7 +396,7 @@ question_classifer_answer_format={
 }
 }
 
-"""## Function to process user questions"""
+"""## Function to process user questions and clean return query data"""
 
 # classify user question to ensure it is irrelevant
 def question_classifcation(question):
@@ -515,6 +518,34 @@ def user_question_processing(question,previous_message_id):
            raise Exception ("Incomplete LLM Response")
       return function_calls,message_id
 
+# Process the return data from PostgreSQL server
+def clean_query_data(query_data):
+    clean_data=[]
+    for item in query_data:
+        if type(item)==dict:
+            #print(item)
+            #print(clean_data)
+            #print(row)
+            row={}
+            for key in item.keys():
+                #print(key,item[key])
+                if type(item[key])==Decimal:
+                  #print(key,float(item[key]))
+                  row.update({key:float(item[key])})
+                elif type(item[key])==datetime.date:
+                    #print(key,str(item[key]))
+                    row.update({key:str(item[key])})
+                else:
+                    #print(key,item[key])
+                    row.update({key:item[key]})
+            #print(row)
+            clean_data.append(row)
+            #print("================================")
+            #print(clean_data)
+        else:
+          raise Exception("Unexcpeted return Data Structure")
+    return clean_data
+
 """## AI Agent"""
 
 first_run=True
@@ -528,6 +559,7 @@ try:
                         dbname=os.environ["DB_NAME"],
                         user=os.environ["DB_USER"],
                         password=os.environ["DB_PASSWORD"],
+                        row_factory=dict_row,
                         connect_timeout=5)
 except psycopg.Error:
        raise Exception("Database related error, unable to connect to Database.")
@@ -608,7 +640,13 @@ while program_status is True:
                                     #print(data)
                           except psycopg.Error:
                                 raise Exception("Database related error")
-                          query_result.update({item['call_id']:data})
+                          clean_data=clean_query_data(data)
+                          query_result.update({item['call_id']:clean_data})
+                          #print('===========================================')
+                          #print(clean_data)
+                          #print(len(clean_data))
+                          #print('===========================================')
+                          #raise Exception ("Stop")
                           #print(query_result)
                     elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
                          #print('+++++++++++++++++++++++++++++++++')
@@ -636,10 +674,17 @@ while program_status is True:
                                         query_data=cur.fetchall()
                                  except psycopg.Error:
                                         raise Exception("Database related error")
-                                 data.update({query_name:query_data})
+                                 clean_data=clean_query_data(query_data)
+                                 #print('+++++++++++++++++++++++++++++++++')
+                                 #print(clean_data)
+                                 #print(len(clean_data))
+                                 #print('+++++++++++++++++++++++++++++++++')
+                                 data.update({query_name:clean_data})
                          query_result.update({item['call_id']:data})
                          #print(query_result)
                 tool_results.update({"previous_message_id":previous_message_id})
                 tool_results.update({"query_result":query_result})
+                print('=============================================')
+                print("Tool results")
                 print(tool_results)
 
