@@ -194,6 +194,9 @@ def country_return_value(top_n=None):
                   where return_value_rank<={int(top_n)};'''
   return query
 
+def customized_tool_call(query):
+    return query
+
 """## Tool Definitions and System Prompt"""
 
 get_monthly_return_tool={
@@ -325,8 +328,25 @@ country_return_value_tool={
 }
 }
 
+customized_tool_call_tool={
+"type":"function",
+"name":"customized_tool_call",
+"description":"Execute a custom SQL query when the available analytical tools cannot provide the required information.",
+"parameters":{
+    "type":"object",
+    "description":"Provide the customized SQL query",
+    "properties":{
+        "query":{
+            "type":"string",
+            "description":"The customized SQL query you proposed."
+        }
+    },
+    "required":["query"]
+}
+}
+
 tools=[get_monthly_return_tool,get_product_return_tool,product_category_return_tool,
-       product_department_return_tool,customer_return_value_tool,country_return_value_tool]
+       product_department_return_tool,customer_return_value_tool,country_return_value_tool,customized_tool_call_tool]
 
 system_prompt="""
 Database Description:
@@ -351,6 +371,12 @@ You are an analyst responsible for analyzing sales return patterns from differen
 Instructions:
 For analysis, you may use the available tools or construct SQL queries. Only construct a SQL query when the available tools do not provide the information required for the analysis. Do not write SQL queries solely to verify results returned by the available tools.
 Do not list known facts from the provided information as assumptions. Do not make assumptions about unavailable information, unclear definitions, or undefined metrics.
+
+In every text response, use the status field to indicate the purpose of the response:
+- Use "processing_request" when the analysis is not complete, including when presenting an analysis plan, requesting human approval, asking the user a question, or providing any other intermediate response.
+- Use "final_report" only when the analysis is complete and you are providing the final report.
+Use the text_response field for your response to the user, including the final report.
+Do not include these fields when making tool calls.
 
 Before conducting the analysis, present the following for human approval:
 - The proposed analysis plan.
@@ -395,6 +421,30 @@ question_classifer_answer_format={
     "additionalProperties":False
 }
 }
+}
+
+normal_text_response_format={
+"format":{
+    "type":"json_schema",
+    "name":"text_response_format",
+    "strict":True,
+    "schema":{
+        "type":"object",
+        "properties":{
+            "status":{
+                "type":"string",
+                "description": "Indicates whether the analysis is still being processed or the final report is being provided.",
+                "enum":["processing_request","final_report"]
+            },
+            "text_response":{
+              "type":"string",
+              "description": "A natural-language response written for the user. Do not return JSON, dictionaries, or other structured data inside this field. Include the final report here when the analysis is complete."
+            }   
+        },
+        "required":["status","text_response"],
+        "additionalProperties":False
+}
+}    
 }
 
 """## Function to process user questions and clean return query data"""
@@ -448,6 +498,8 @@ def first_time_question_process(question):
           raise Exception ("Network connection issue")
     except openai.APIStatusError:
           raise Exception ("API Error")
+    #print('-------------------=====================================')
+    #print(response)
     if response.status=='completed':
         for item in response.output:
             if item.type=='message':
@@ -455,11 +507,15 @@ def first_time_question_process(question):
                 if 'status' in result.keys():
                     if result['status']=='completed':
                           #print('Response is good')
-                          result=response.output_text
-                          message_id=response.id
-                          #print(result)
-                          #print(message_id)
-                          return result,message_id
+                          llm_output=json.loads(response.output_text)
+                          if 'text_response' in llm_output.keys():
+                                result=llm_output['text_response']
+                                message_id=response.id
+                                #print(result)
+                                #print(type(result))
+                                #print('-----------------------------')
+                                #print(message_id)
+                                return result,message_id
                     else:
                         raise Exception ("Incompleted LLM Response")
                 else:
@@ -470,14 +526,16 @@ def first_time_question_process(question):
        raise Exception ("Incompleted LLM Response")
 
 # Process follow up response or tool calls
-def user_question_processing(question,previous_message_id):
+def user_question_processing(question,previous_message_id):      
       function_calls=[]
+      text_response=None
       try:
           response=client.responses.create(
             model="gpt-5.6-luna",
             previous_response_id=previous_message_id,
             instructions=system_prompt,
             input=question,
+            text=normal_text_response_format,
             tools=tools)
       except openai.AuthenticationError:
             raise Exception ("Invalid API key")
@@ -485,11 +543,25 @@ def user_question_processing(question,previous_message_id):
             raise Exception ("Network connection issue")
       except openai.APIStatusError:
             raise Exception ("API Error")
-
       message_id=response.id
+      #print('==============------------------------++++++++++++++++++++')
+      #print(response)
       if response.status=='completed':
           for item in response.output:
-              if item.type=='function_call':
+              if item.type=='message':
+                text_response=item.model_dump()
+                if 'status' in text_response.keys():
+                    if text_response['status']=='completed':
+                          #print('Response is good')
+                          text_response=json.loads(response.output_text)
+                          message_id=response.id
+                          #print(text_response)
+                          #print(message_id)
+                    else:
+                        raise Exception ("Incompleted LLM Response")
+                else:
+                    raise Exception ("Incompleted LLM Response")
+              elif item.type=='function_call':
                   result=item.model_dump()
                   if 'status' in result.keys():
                       if result['status']=='completed':
@@ -517,7 +589,7 @@ def user_question_processing(question,previous_message_id):
                         raise Exception ("Incomplete LLM Response")
       else:
            raise Exception ("Incomplete LLM Response")
-      return function_calls,message_id
+      return text_response,function_calls,message_id
 
 # Process the return data from PostgreSQL server
 def clean_query_data(query_data):
@@ -579,6 +651,7 @@ try:
                         connect_timeout=5)
 except psycopg.Error:
        raise Exception("Database related error, unable to connect to Database.")
+
 while program_status is True:
   question=None
   if max_attempt==0:
@@ -590,155 +663,209 @@ while program_status is True:
         first_run=False
      if processing_request is False:
            question=input("What kind of analysis do you want to perform:")
+           if type(question)==str and len(question)==0:
+                   print("We didn’t receive a question. Please enter a question and try again.")
+                   print()
+                   continue
      elif processing_request is True:
            question=input("\nWhat's your response:")
+           if type(question)==str and len(question)==0:
+                   print("We didn’t receive a response. Please enter a response and try again.")
+                   print()
+                   continue
      #print(question)
      if str.lower(question)=='exit':
-      print("The program has been stopped.")
-      break
+            print("The program has been stopped.")
+            break
      elif str.lower(question)=='help':
-      print("Type exit to exit the program or ask a question to perform data analysis.")
-      continue
+            print("Type exit to exit the program or ask a question to perform data analysis.")
+            continue
      else:
           if processing_request is False:
+              print("============================================================================")
               print("\nQuestion Classification")
-              result=question_classifcation(question)
-              #print(result)
-              if result=='yes':
+              question_classifcation_result=None
+              question_classifcation_result=question_classifcation(question)
+              #print(question_classifcation_result)
+              if question_classifcation_result=='yes':
                   print('This is a relevant question.')
                   processing_request=True
-                  result,previous_message_id=first_time_question_process(question)
+                  llm_first_response,previous_message_id=first_time_question_process(question)
                   print(f"\nUser question: {question}")
                   print('LLM Response:\n')
-                  print(result)
+                  print(llm_first_response)
                   #print(previous_message_id)
-              elif result=='no':
+              elif question_classifcation_result=='no':
                     max_attempt=max_attempt-1
                     if max_attempt==0:
                       continue
                     else:
                         print(f"This question is not relevant to Data Analysis, please try it again. You have {max_attempt} chances to rety.")
           else:
+                print("============================================================================")
                 print("\nLLM Starts to process requests.")
-                llm_response,previous_message_id=user_question_processing(question,previous_message_id)
-                print(llm_response)
-                #print(previous_message_id)
-                tool_results={}
-                query_result={}
-                call_ids=[]
-                for item in llm_response:
-                    #print(item)
-                    #print(item["name"])
-                    if item["name"] in ("get_monthly_return","customer_return_value",'country_return_value'):
-                          #print('++++++++++++++++++++++++++')
-                          #print(item['name'])
-                          #print(item['call_id'])
-                          query=None
-                          data=None
-                          if item['name']=="get_monthly_return":
-                              #print(item['arguments']['start_year'],item['arguments']['start_month'],
-                              #      item['arguments']['end_year'],print(item['arguments']['end_month'])
-                              if item['arguments']['start_year'] is not None and item['arguments']['start_month'] is not None and item['arguments']['end_year'] is not None and item['arguments']['end_month'] is not None:
-                                    start_month,end_month=generate_date_value(item['arguments']['start_year'],item['arguments']['start_month'],
-                                                                        item['arguments']['end_year'],item['arguments']['end_month'])
-                                    #print("start_month:", start_month,"end_month:", end_month)
-                                    query=get_monthly_return(start_month,end_month)
-                              elif item['arguments']['start_year'] is None and item['arguments']['start_month'] is None and item['arguments']['end_year'] is None and item['arguments']['end_month'] is None:
-                                    query=get_monthly_return()
-                          elif item["name"]=="customer_return_value":
-                               if "top_n" not in item["arguments"].keys():
-                                    query=customer_return_value()
-                               else:
-                                    query=customer_return_value(top_n=item["arguments"]["top_n"])
-                          elif item["name"]=='country_return_value':
-                               if "top_n" not in item['arguments'].keys():
-                                    query=country_return_value()
-                               else:
-                                    query=country_return_value(top_n=item['arguments']['top_n'])
-                          #print(query)
-                          if query is None:
-                                raise Exception ("SQL query does not exist.")
-                          else:
-                                try:
-                                        with conn.cursor() as cur:
-                                            cur.execute(query)
-                                            data=cur.fetchall()
-                                            #print(data)
-                                except psycopg.Error:
-                                        raise Exception("Database related error")
-                                clean_data=clean_query_data(data)
+                result,function_calls,previous_message_id=user_question_processing(question,previous_message_id)
+                #print(result)
+                #print(function_calls)
+                #print(result is None)
+                #print(function_calls is None)
+                #print('++++++++++++++++++++++++++++++++++++++++++')
+                if result is not None and function_calls is None:
+                      print(result)
+                      continue
+                elif result is None and function_calls is not None:
+                        #print('=================================')
+                        #print(function_calls)
+                        #print(previous_message_id)
+                        tool_results={}
+                        query_result={}
+                        call_ids=[]
+                        for item in function_calls:
+                            #print(item)
+                            #print(item["name"])
+                            if item["name"] in ("get_monthly_return","customer_return_value",'country_return_value','customized_tool_call'):
+                                #print('++++++++++++++++++++++++++')
+                                #print(item['name'])
+                                #print(item['call_id'])
+                                query=None
+                                data=None
+                                if item['name']=="get_monthly_return":
+                                    #print(item['arguments'])
+                                    #print(type(item['arguments']))
+                                    #print(item['arguments']['start_year'],item['arguments']['start_month'],
+                                    #      item['arguments']['end_year'],print(item['arguments']['end_month'])
+                                    if item['arguments']['start_year'] is not None and item['arguments']['start_month'] is not None and item['arguments']['end_year'] is not None and item['arguments']['end_month'] is not None:
+                                            start_month,end_month=generate_date_value(item['arguments']['start_year'],item['arguments']['start_month'],
+                                                                                item['arguments']['end_year'],item['arguments']['end_month'])
+                                            #print("start_month:", start_month,"end_month:", end_month)
+                                            query=get_monthly_return(start_month,end_month)
+                                    elif len(item['arguments'])==0 or (item['arguments']['start_year'] is None and item['arguments']['start_month'] is None and item['arguments']['end_year'] is None and item['arguments']['end_month'] is None):
+                                            query=get_monthly_return()
+                                elif item["name"]=="customer_return_value":
+                                    if "top_n" not in item["arguments"].keys():
+                                            query=customer_return_value()
+                                    else:
+                                            query=customer_return_value(top_n=item["arguments"]["top_n"])
+                                elif item["name"]=='country_return_value':
+                                    if "top_n" not in item['arguments'].keys():
+                                            query=country_return_value()
+                                    else:
+                                            query=country_return_value(top_n=item['arguments']['top_n'])
+                                elif item["name"]=="customized_tool_call":
+                                            query=customized_tool_call(query=item['arguments']["query"])
+                                #print(query)
+                                if query is None:
+                                        raise Exception ("SQL query does not exist.")
+                                else:
+                                        try:
+                                                with conn.cursor() as cur:
+                                                    cur.execute(query)
+                                                    data=cur.fetchall()
+                                                    #print(data)
+                                        except psycopg.Error:
+                                                raise Exception("Database related error")
+                                        clean_data=clean_query_data(data)
+                                        call_ids.append(item['call_id'])
+                                        query_result.update({item['call_id']:clean_data})
+                                        #print('===========================================')
+                                        #print(clean_data)
+                                        #print(len(clean_data))
+                                        #print('===========================================')
+                                        #raise Exception ("Stop")
+                                        #print(query_result)
+                            elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
+                                #print('+++++++++++++++++++++++++++++++++')
+                                #print(item["name"])
+                                query=None
+                                data={}
+                                #print(item["arguments"])
+                                #print(item["call_id"])
+                                if item["name"] =="get_product_return":
+                                    metric=None
+                                    top_n=None
+                                    if "metric" in item["arguments"].keys():
+                                        metric=item["arguments"]["metric"]
+                                    if "top_n" in item["arguments"].keys():
+                                        top_n=item["arguments"]["top_n"]
+                                    query=get_product_return(metric=metric,top_n=top_n)
+                                elif item["name"] =='product_category_return':
+                                    if "metric" not in item["arguments"].keys():
+                                            query=product_category_return()
+                                    else:
+                                            query=product_category_return(metric=item["arguments"]["metric"])
+                                elif item["name"] =='product_department_return':
+                                    if "metric" not in item["arguments"].keys():
+                                            query=product_department_return()
+                                    else:
+                                            query=product_department_return(metric=item["arguments"]["metric"])
+                                #print(query)
+                                for key in query.keys():
+                                    query_data=None
+                                    if query[key] is not None:
+                                        query_name=key+'_data'
+                                        #print(query_name)
+                                        #print(query[key])
+                                        try:
+                                            with conn.cursor() as cur:
+                                                cur.execute(query[key])
+                                                query_data=cur.fetchall()
+                                        except psycopg.Error:
+                                                raise Exception("Database related error")
+                                        clean_data=clean_query_data(query_data)
+                                        #print('+++++++++++++++++++++++++++++++++')
+                                        #print(clean_data)
+                                        #print(len(clean_data))
+                                        #print('+++++++++++++++++++++++++++++++++')
+                                        data.update({query_name:clean_data})
                                 call_ids.append(item['call_id'])
-                                query_result.update({item['call_id']:clean_data})
-                                #print('===========================================')
-                                #print(clean_data)
-                                #print(len(clean_data))
-                                #print('===========================================')
-                                #raise Exception ("Stop")
+                                query_result.update({item['call_id']:data})
                                 #print(query_result)
-                    elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
-                         #print('+++++++++++++++++++++++++++++++++')
-                         #print(item["name"])
-                         query=None
-                         data={}
-                         #print(item["arguments"])
-                         #print(item["call_id"])
-                         if item["name"] =="get_product_return":
-                              metric=None
-                              top_n=None
-                              if "metric" in item["arguments"].keys():
-                                  metric=item["arguments"]["metric"]
-                              if "top_n" in item["arguments"].keys():
-                                  top_n=item["arguments"]["top_n"]
-                              query=get_product_return(metric=metric,top_n=top_n)
-                         elif item["name"] =='product_category_return':
-                              if "metric" not in item["arguments"].keys():
-                                    query=product_category_return()
-                              else:
-                                    query=product_category_return(metric=item["arguments"]["metric"])
-                         elif item["name"] =='product_department_return':
-                              if "metric" not in item["arguments"].keys():
-                                    query=product_department_return()
-                              else:
-                                    query=product_department_return(metric=item["arguments"]["metric"])
-                         #print(query)
-                         for key in query.keys():
-                              query_data=None
-                              if query[key] is not None:
-                                 query_name=key+'_data'
-                                 #print(query_name)
-                                 #print(query[key])
-                                 try:
-                                    with conn.cursor() as cur:
-                                        cur.execute(query[key])
-                                        query_data=cur.fetchall()
-                                 except psycopg.Error:
-                                        raise Exception("Database related error")
-                                 clean_data=clean_query_data(query_data)
-                                 #print('+++++++++++++++++++++++++++++++++')
-                                 #print(clean_data)
-                                 #print(len(clean_data))
-                                 #print('+++++++++++++++++++++++++++++++++')
-                                 data.update({query_name:clean_data})
-                         call_ids.append(item['call_id'])
-                         query_result.update({item['call_id']:data})
-                         #print(query_result)
-                tool_results.update({"previous_message_id":previous_message_id})
-                tool_results.update({"query_result":query_result})
-                print('=============================================')
-                print('Call ID')
-                print(call_ids)
-                print("Tool results")
-                print(tool_results)
-                previous_message_id=tool_results['previous_message_id']
-                return_results=prepare_return_tool_results(call_ids,tool_results)
-                llm_response=client.responses.create(
-                    model="gpt-5.6-luna",
-                    previous_response_id=previous_message_id,
-                    instructions=system_prompt,
-                    input=return_results,
-                    tools=tools)
-                print('================================================')
-                print("LLM Return response")
-                print(llm_response)
-                print("=================================================")
-                print(llm_response.output_text)
+                        tool_results.update({"previous_message_id":previous_message_id})
+                        tool_results.update({"query_result":query_result})
+                        #print('=============================================')
+                        #print('Call ID')
+                        #print(call_ids)
+                        #print("Tool results")
+                        print("\nTool results are ready")
+                        print("\nSend Tool results back to LLM")
+                        #print(tool_results)
+                        previous_message_id=tool_results['previous_message_id']
+                        return_results=prepare_return_tool_results(call_ids,tool_results)
+                        llm_response,function_calls,previous_message_id=user_question_processing(return_results,previous_message_id)
+                        #print('===============================================')
+                        #print(llm_response)
+                        #print(type(llm_response))
+                        #print(function_calls)
+                        if llm_response is not None and len(function_calls)==0:
+                               #print(llm_response)
+                               if "status" not in llm_response.keys() or "text_response" not in llm_response.keys():
+                                       raise Exception ("Invalid Response Foramt")
+                               if llm_response["status"]=="final_report":
+                                        print("==============================================================")
+                                        print("\nFinal Report")
+                                        print()
+                                        print()
+                                        print(llm_response["text_response"])
+                                        print()
+                                        print()
+                                        print("Analysis is completed, you can start a new analysis now.")
+                                        processing_request=False
+                                        print("==============================================================")
+                                        continue
+                               elif llm_response["status"]=="processing_request":
+                                        print(llm_response["text_response"])
+                                        continue
+                        elif llm_response is None and len(function_calls)>0:
+                               print(function_calls)
+                               continue
+                        '''llm_response=client.responses.create(
+                            model="gpt-5.6-luna",
+                            previous_response_id=previous_message_id,
+                            instructions=system_prompt,
+                            input=return_results,
+                            tools=tools)
+                        print('================================================')
+                        print("LLM Return response")
+                        print(llm_response)
+                        print("=================================================")
+                        print(llm_response.output_text)'''
