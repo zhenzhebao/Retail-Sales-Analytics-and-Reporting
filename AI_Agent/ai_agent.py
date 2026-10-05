@@ -646,12 +646,18 @@ while program_status is True:
                               elif item['arguments']['start_year'] is None and item['arguments']['start_month'] is None and item['arguments']['end_year'] is None and item['arguments']['end_month'] is None:
                                     query=get_monthly_return()
                           elif item["name"]=="customer_return_value":
-                               query=customer_return_value(top_n=item["arguments"]["top_n"])
+                               if "top_n" not in item["arguments"].keys():
+                                    query=customer_return_value()
+                               else:
+                                    query=customer_return_value(top_n=item["arguments"]["top_n"])
                           elif item["name"]=='country_return_value':
-                               query=country_return_value(top_n=item['arguments']['top_n'])
+                               if "top_n" not in item['arguments'].keys():
+                                    query=country_return_value()
+                               else:
+                                    query=country_return_value(top_n=item['arguments']['top_n'])
                           #print(query)
                           if query is None:
-                                raise Exception ("Invalid SQL query.")
+                                raise Exception ("SQL query does not exist.")
                           else:
                                 try:
                                         with conn.cursor() as cur:
@@ -677,11 +683,23 @@ while program_status is True:
                          #print(item["arguments"])
                          #print(item["call_id"])
                          if item["name"] =="get_product_return":
-                              query=get_product_return(metric=item["arguments"]["metric"],top_n=item["arguments"]["top_n"])
+                              metric=None
+                              top_n=None
+                              if "metric" in item["arguments"].keys():
+                                  metric=item["arguments"]["metric"]
+                              if "top_n" in item["arguments"].keys():
+                                  top_n=item["arguments"]["top_n"]
+                              query=get_product_return(metric=metric,top_n=top_n)
                          elif item["name"] =='product_category_return':
-                              query=product_category_return(metric=item["arguments"]["metric"])
+                              if "metric" not in item["arguments"].keys():
+                                    query=product_category_return()
+                              else:
+                                    query=product_category_return(metric=item["arguments"]["metric"])
                          elif item["name"] =='product_department_return':
-                              query=product_department_return(metric=item["arguments"]["metric"])
+                              if "metric" not in item["arguments"].keys():
+                                    query=product_department_return()
+                              else:
+                                    query=product_department_return(metric=item["arguments"]["metric"])
                          #print(query)
                          for key in query.keys():
                               query_data=None
