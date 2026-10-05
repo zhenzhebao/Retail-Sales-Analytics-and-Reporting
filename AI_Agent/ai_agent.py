@@ -1,16 +1,17 @@
-#from google.colab import userdata
-#api_key=userdata.get('OPENAI_API_KEY')
+"""from google.colab import userdata
+api_key=userdata.get('OPENAI_API_KEY')
+!pip install openai
+client=OpenAI(api_key=api_key)"""
 
-#!pip install openai
-#client=OpenAI(api_key=api_key)
+import datetime
 from datetime import date
+from decimal import Decimal
+import openai
 from openai import OpenAI
 import json
 import os
 import psycopg
 from psycopg.rows import dict_row
-import datetime
-from decimal import Decimal
 
 client=OpenAI()
 
@@ -620,7 +621,7 @@ while program_status is True:
           else:
                 print("\nLLM Starts to process requests.")
                 llm_response,previous_message_id=user_question_processing(question,previous_message_id)
-                #print(llm_response)
+                print(llm_response)
                 #print(previous_message_id)
                 tool_results={}
                 query_result={}
@@ -649,22 +650,25 @@ while program_status is True:
                           elif item["name"]=='country_return_value':
                                query=country_return_value(top_n=item['arguments']['top_n'])
                           #print(query)
-                          try:
-                                with conn.cursor() as cur:
-                                    cur.execute(query)
-                                    data=cur.fetchall()
-                                    #print(data)
-                          except psycopg.Error:
-                                raise Exception("Database related error")
-                          clean_data=clean_query_data(data)
-                          call_ids.append(item['call_id'])
-                          query_result.update({item['call_id']:clean_data})
-                          #print('===========================================')
-                          #print(clean_data)
-                          #print(len(clean_data))
-                          #print('===========================================')
-                          #raise Exception ("Stop")
-                          #print(query_result)
+                          if query is None:
+                                raise Exception ("Invalid SQL query.")
+                          else:
+                                try:
+                                        with conn.cursor() as cur:
+                                            cur.execute(query)
+                                            data=cur.fetchall()
+                                            #print(data)
+                                except psycopg.Error:
+                                        raise Exception("Database related error")
+                                clean_data=clean_query_data(data)
+                                call_ids.append(item['call_id'])
+                                query_result.update({item['call_id']:clean_data})
+                                #print('===========================================')
+                                #print(clean_data)
+                                #print(len(clean_data))
+                                #print('===========================================')
+                                #raise Exception ("Stop")
+                                #print(query_result)
                     elif item["name"] in ("get_product_return","product_category_return","product_department_return"):
                          #print('+++++++++++++++++++++++++++++++++')
                          #print(item["name"])
