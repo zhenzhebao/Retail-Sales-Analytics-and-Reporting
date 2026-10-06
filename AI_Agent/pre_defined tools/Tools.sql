@@ -53,11 +53,8 @@ from t;
 /* return by country*/
 create view country_return_summary as
 with t as (select customer_country,quantity,product_unit_price,
-case 
-	when quantity<0 then abs(quantity*product_unit_price)
-	else 0
-end as return_value
-from all_retail_data),
+abs(quantity*product_unit_price) as return_value
+from all_return_data),
 t2 as (select customer_country,sum(return_value) as total_return_value
 from t
 group by customer_country)

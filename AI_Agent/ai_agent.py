@@ -491,6 +491,7 @@ def first_time_question_process(question):
             model="gpt-5.6-luna",
             instructions=system_prompt,
             input=question,
+            text=normal_text_response_format,
             tools=tools)
     except openai.AuthenticationError:
           raise Exception ("Invalid API key")
@@ -710,9 +711,18 @@ while program_status is True:
                 #print(result is None)
                 #print(function_calls is None)
                 #print('++++++++++++++++++++++++++++++++++++++++++')
-                if result is not None and function_calls is None:
-                      print(result)
-                      continue
+                if result is not None and len(function_calls)==0:
+                      print('=====================--------------------------')
+                      if "status" not in result.keys() or "text_response" not in result.keys():
+                          raise Exception ("Invalid Response Foramt") 
+                      if result["status"]=="final_report":
+                                        print(result["text_response"])
+                                        processing_request=False
+                                        print("==============================================================")
+                                        continue
+                      elif result["status"]=="processing_request":
+                                        print(result["text_response"])
+                                        continue
                 elif result is None and function_calls is not None:
                         #print('=================================')
                         #print(function_calls)
