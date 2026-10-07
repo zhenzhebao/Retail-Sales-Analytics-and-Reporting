@@ -691,7 +691,7 @@ while program_status is True:
      break
   else:
      if first_run is True:
-        print("Type exit to exit the program or help for more information.")
+        print("Type exit to exit the program, reset to start a new conversation or help for more information.")
         first_run=False
      if processing_request is False:
            user_question=input("What kind of analysis do you want to perform:")
@@ -715,8 +715,12 @@ while program_status is True:
             print("The program has been stopped.")
             break
      elif str.lower(user_input)=='help':
-            print("Type exit to exit the program or ask a question to perform data analysis.")
+            print("Type exit to exit the program, reset to start a new conversation or ask a question to perform data analysis.")
             continue
+     elif str.lower(user_input)=='reset':
+            processing_request=False
+            print("This Conversation is ended by user, you will start a new conversation.")
+            print("==============================================================")
      else:
           if processing_request is False:
               print("============================================================================")
@@ -895,15 +899,32 @@ while program_status is True:
                                         print(llm_text_response)
                                         print()
                                         print()
-                                        print("Analysis is completed, you can start a new analysis now.")
-                                        processing_request=False
-                                        print("==============================================================")
-                                        break
+                                        print("Analysis is completed, you can start a new analysis now by press enter, or ask follow up questions.")
+                                        user_question=(input("What questions do you have?"))
+                                        if len(user_question)==0 or str.lower(user_question)=='reset':
+                                            processing_request=False
+                                            print("This Conversation is ended by user, you will start a new conversation.")
+                                            print("==============================================================")
+                                            break
+                                        elif str.lower(user_question)=='exit':
+                                             program_status=False
+                                             break
+                                        else:
+                                            analysis_status,llm_text_response,function_calls,previous_message_id=user_question_processing(user_question,previous_message_id)
+                                            if analysis_status is not None and llm_text_response is not None and function_calls is None:
+                                                    print(llm_text_response)
+                                                    break
+                                            elif analysis_status is None and llm_text_response is None and function_calls is not None:
+                                                    print("Perform another tool call based on response from LLM")
+                                                    #print(function_calls)
+                                                    continue
                                elif analysis_status=="processing_request":
                                         print(llm_text_response)
                                         break
                         elif analysis_status is None and llm_text_response is None and function_calls is not None:
                                print("Perform another tool call based on response from LLM")
-                               print(function_calls)
+                               #print(function_calls)
                                continue
                     continue
+
+print("The program has been stopped.")
