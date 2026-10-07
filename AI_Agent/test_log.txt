@@ -1,0 +1,27 @@
+{
+  "test_question": "List the top negative three products by return value; do not silently substitute a positive number, and cancel if the request is invalid.",
+  "failed_attempts": [
+    {
+      "step_where_failure_occurred": "Interpreting and explaining the invalid ranking request. The response incorrectly treats 'negative three products' as a negative return-value metric. The invalid input is top_n=-3, a requested product count; the cancellation explanation must identify that count constraint.",
+      "relevant_llm_response": {
+        "analysis_status": "cancel_analysis",
+        "text_response": "The request is invalid under the available metric definitions: return value is defined and reported as a positive amount, while you explicitly prohibit substituting a positive number for a negative return value. The analysis is canceled."
+      }
+    },
+    {
+      "step_where_failure_occurred": "Interpreting and explaining the invalid ranking request. The response again interprets a requested product count of negative three as a request to rank negative monetary return values. It should reject top_n=-3 because the number of requested products must be positive.",
+      "relevant_llm_response": {
+        "analysis_status": "cancel_analysis",
+        "text_response": "The request is invalid under the available metric definitions: return value is defined and reported as a positive number, so there are no negative return values to rank. I will not substitute positive values or run an alternative analysis."
+      }
+    },
+    {
+      "step_where_failure_occurred": "Interpreting and explaining the invalid ranking request. The response incorrectly says the user requested negative return values. The user requested a negative product count, top_n=-3. The agent should explain that top_n must be at least 1; all three cancellation explanations misinterpret the request.",
+      "relevant_llm_response": {
+        "analysis_status": "cancel_analysis",
+        "text_response": "The request is invalid under the available metric definitions: return value is defined and reported as a positive number, while you requested negative return values. I will not silently substitute positive values, and no analysis was conducted."
+      }
+    }
+  ]
+}
+

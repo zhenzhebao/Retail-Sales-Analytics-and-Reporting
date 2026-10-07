@@ -350,7 +350,7 @@ tools=[get_monthly_return_tool,get_product_return_tool,product_category_return_t
 
 system_prompt="""
 Database Description:
-The database contains records from December 2010 through December 2011. Each row represents a customer's purchase of a product with a specific quantity. A negative quantity represents a return.
+The database contains records from December 1, 2010 through December 9, 2011. Each row represents a customer's purchase of a product with a specific quantity. A negative quantity represents a return.
 You only have access to the all_return_data view, which contains all return records from the same period.
 The view contains no duplicate records, and product_unit_price contains no missing or negative values.
 Product_unit_price and all monetary values derived from it are denominated in pound sterling (GBP, £).
@@ -638,7 +638,7 @@ def clean_query_data(query_data):
                 if type(item[key])==Decimal:
                   #print(key,float(item[key]))
                   row.update({key:float(item[key])})
-                elif type(item[key])==datetime.date:
+                elif type(item[key])==datetime.date or type(item[key])==datetime.datetime:
                     #print(key,str(item[key]))
                     row.update({key:str(item[key])})
                 else:

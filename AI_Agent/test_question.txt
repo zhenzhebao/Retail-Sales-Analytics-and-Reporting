@@ -1,0 +1,30 @@
+1. Calculate the overall number of return records, distinct return invoices, distinct returning customers, returned units, and total return value in GBP.
+2. Summarize return quantity and value for every available month and identify the peak month for each metric.
+3. Report monthly returned units and GBP return value for January through March 2011 inclusive.
+4. Report December 2011 returned units and GBP return value, and explicitly explain its available data coverage.
+5. List the top seven products by returned quantity, including stock code, description, units and rank.
+6. List the top seven products by return value, including stock code, description, GBP value and rank.
+7. List the top four products separately by returned quantity and return value, and compare the leaders.
+8. Compare all product categories by returned quantity and return value, including both rankings.
+9. Compare all product departments by returned quantity and return value, including both rankings.
+10. List the top three countries by total GBP return value, including their ranks.
+11. List the top three customers by total GBP return value, including customer IDs and ranks.
+12. Calculate the United Kingdom's total return value and percentage of overall return value.
+13. Compare January and February 2011 returned units and return value, calculating absolute and percentage changes with January as the baseline.
+14. Calculate 2011 total returned units, return value and weighted average return value per unit.
+15. Compare GBP return value for all four quarters of 2011. Check observed record dates, flag Q4's partial dataset coverage, and do not infer missing data solely from days without return records.
+16. Report returned units, GBP return value and record count for January 1 through January 15, 2011 inclusive.
+17. Compare total GBP return value by membership type, preserving NULL memberships as a separate group.
+18. List the five highest-value return invoices after aggregating all lines, including invoice number, customer ID, returned units and GBP value.
+19. Report return record count, units and GBP value for customer ID 99999999, distinguishing no records from genuine zero-valued returns.
+20. Report return record count, units and GBP value for stock code '__NO_SUCH_PRODUCT__', distinguishing no records from genuine zero-valued returns.
+21. Report return record count, units and GBP value for country 'Atlantis', distinguishing no records from genuine zero-valued returns.
+22. For stock code '23843', calculate returned units, GBP return value, distinct return invoices and distinct returning customers.
+23. Calculate the distinct numbers of returned stock codes and returning customer countries across the entire available dataset.
+24. Calculate the combined GBP return value of the two highest-value products and their percentage of overall return value.
+25. Compare January and December 2011 weighted average return value per unit; calculate each as monthly return value divided by monthly returned units and explain their data coverage.
+26. Report return record count, units and GBP return value for December 9, 2011, including all times on that date.
+27. Calculate the 2011 sales return rate as returned units divided by sold units; cancel if sold units are unavailable.
+28. Quantify recorded customer return reasons by return value; cancel if no recorded return-reason field is available.
+29. Report monthly returned units and return value for January through March 2012; do not invent data or treat unavailable periods as confirmed zero returns.
+30. List the top negative three products by return value; do not silently substitute a positive number, and cancel if the request is invalid.
