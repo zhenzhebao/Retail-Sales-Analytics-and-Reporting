@@ -374,9 +374,9 @@ Do not list known facts from the provided information as assumptions. Do not mak
 
 In every text response, use the analysis_status field to indicate the purpose of the response:
 - Use "processing_request" when the analysis is not complete, including when presenting an analysis plan, requesting human approval, asking the user a question, or providing any other intermediate response.
-- Use "final_report" only when the analysis is complete and you are providing the final report.
-- Use "cancel_analysis" when the user rejects the proposed analysis and does not want to revise it, or explicitly asks to stop/cancel the current analysis.
-Use the text_response field for your response to the user, including the final report.
+- Use "final_report" only when the requested analysis has been successfully completed and you are providing the final report.
+- Use "cancel_analysis" when the requested analysis cannot be completed with the available data or information, when the user rejects the proposed analysis and does not want to revise it, or when the user explicitly asks to stop/cancel the current analysis.
+Use the text_response field for your response to the user, including the final report or the reason the analysis cannot be completed.
 Do not include these fields when making tool calls.
 
 Before conducting the analysis, present the following for human approval:
@@ -434,7 +434,7 @@ normal_text_response_format={
         "properties":{
             "analysis_status":{
                 "type":"string",
-                "description": "Indicates whether the analysis is still being processed or the final report is being provided.",
+                "description": "Indicates the current outcome of the analysis. Use processing_request when the analysis is still in progress or requires user input, final_report only when the requested analysis has been successfully completed, and cancel_analysis when the analysis cannot be completed with the available information or when the user cancels it.",
                 "enum":["processing_request","final_report","cancel_analysis"]
             },
             "text_response":{
@@ -540,7 +540,7 @@ def first_time_question_process(user_question):
                           #print(message_id)
                           #print('LLM Response')
                           #print(response)
-                          return llm_text_response,message_id   
+                          return analysis_status,llm_text_response,message_id   
 
 """## Function to process user response and clean return query data"""
 # Process follow up response or tool calls
@@ -727,11 +727,19 @@ while program_status is True:
               if question_classifcation_result=='yes':
                   print('This is a relevant question.')
                   processing_request=True
-                  llm_text_response,previous_message_id=first_time_question_process(user_question)
+                  analysis_status,llm_text_response,previous_message_id=first_time_question_process(user_question)
                   print(f"\nUser question: {user_question}")
                   print('LLM Response:\n')
-                  print(llm_text_response)
-                  #print(previous_message_id)
+                  if analysis_status=='cancel_analysis':
+                       print(llm_text_response)
+                       print("========================================================================")
+                       processing_request=False
+                       previous_message_id=None
+                       continue
+                  else:
+                       print(analysis_status)
+                       print(llm_text_response)
+                       #print(previous_message_id)
               elif question_classifcation_result=='no':
                     max_attempt=max_attempt-1
                     if max_attempt==0:
@@ -744,6 +752,8 @@ while program_status is True:
                 print("Your response:",user_response)
                 analysis_status,llm_text_response,function_calls,previous_message_id=user_question_processing(user_response,previous_message_id)
                 #print('++++++++++++++++++++++++++++++++++++++++++')
+                #print(analysis_status)
+                #print(llm_text_response)
                 # if this is a text response from LLM print out the result
                 if analysis_status is not None and llm_text_response is not None and function_calls is None:
                     if analysis_status=='cancel_analysis':
