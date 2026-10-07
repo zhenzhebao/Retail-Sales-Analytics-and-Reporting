@@ -912,8 +912,16 @@ while program_status is True:
                                         else:
                                             analysis_status,llm_text_response,function_calls,previous_message_id=user_question_processing(user_question,previous_message_id)
                                             if analysis_status is not None and llm_text_response is not None and function_calls is None:
-                                                    print(llm_text_response)
-                                                    break
+                                                    if analysis_status=='cancel_analysis':
+                                                       #print(analysis_status)
+                                                        print(llm_text_response)
+                                                        processing_request=False
+                                                        print("This Conversation is ended by user, you will start a new conversation.")
+                                                        print("==============================================================")
+                                                        break
+                                                    else:
+                                                         print(llm_text_response)
+                                                         break
                                             elif analysis_status is None and llm_text_response is None and function_calls is not None:
                                                     print("Perform another tool call based on response from LLM")
                                                     #print(function_calls)
@@ -926,5 +934,5 @@ while program_status is True:
                                #print(function_calls)
                                continue
                     continue
-
-print("The program has been stopped.")
+if program_status is False:
+   print("The program has been stopped.")
