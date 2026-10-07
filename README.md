@@ -78,7 +78,11 @@ A star schema was designed to support analysis of sales and returns; therefore, 
 <img width="70%" alt="star_schema_ERD" src="https://github.com/user-attachments/assets/dbb886ac-9a5a-439e-a9a8-b1818044b24a" />
 
 
-## AI Agent (In Progress)
-- Agent Goal: Analyze returns by utilizing available predefined tools or constructing SQL queries, when necessary, then produce a report summarizing its findings.
+## Return Analysis Agent
+### Overview
+
+An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL. The AI Agent has access to LLM models from OpenAI and a PostgreSQL server to accomplish this. The LLM model is responsible for determining what actions the AI Agent should perform. More specifically, the model can generate an analysis plan and relevant SQL queries based on the user's question. It can also adapt its behavior once it receives SQL results and clarification from the user to determine if additional analysis is needed. When the analysis is complete, it interprets the results and produces the final report.
+
+
 - Data: Relevant tables were properly joined, and only fields related to the analysis were selected to produce the all_retail_data materialized view. This view was filtered to keep only sales or return records to produce the all_sales_data and all_return_data views.
 - Tools: Six SQL reports were written to analyze returns from particular aspects. The SQL reports were wrapped in Python functions that define the required information the agent needs to provide to use each tool, validate the information provided by the agent, and form the complete SQL query.
