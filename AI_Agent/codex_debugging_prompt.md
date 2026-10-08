@@ -1,0 +1,4 @@
+Test the AI agent with a variety of questions to determine whether it can correctly understand the user's intent, process different types of analysis requests, and provide a final report.
+The overall test should examine different ways the AI agent may need to process a request. The AI agent should present an initial analysis plan for human approval, request additional clarification when necessary, select the appropriate predefined tools with the correct parameters, or construct an appropriate SQL query when the predefined tools are insufficient.
+You are prohibited from modifying any files or the PostgreSQL database.
+For the final result, provide a brief summary showing the total number of questions tested and the number of failed attempts. Only provide detailed information for failed attempts. For each failure, include the test question, what went wrong, and the steps required to reproduce the issue.
