@@ -109,3 +109,22 @@ Structured Outputs with text format are implemented to ensure the model generate
 - Processes tool call requests from the LLM, selects the appropriate predefined tools and validates the arguments provided by the LLM, or prepares customized SQL queries. Sends SQL requests to the PostgreSQL server, cleans the SQL query results, and sends them back to the LLM.
     
 - Performs basic validation of LLM responses and SQL query results to check for missing or unexpected information, and raises exceptions when errors are detected.
+
+### Technologies
+
+- Python, SQL, PostgreSQL, OpenAI API
+- Codex (prompt-based automated testing)
+
+### Skills
+
+#### AI Development
+- Prompt Engineering
+- Structured Outputs
+- LLM Tool Calling
+
+#### Software Development
+- Application Development
+- Control Flow and State Management
+- API and Database Integration
+- Error Handling and Data Validation 
+
