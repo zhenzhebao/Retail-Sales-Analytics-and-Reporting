@@ -9,7 +9,7 @@ For the data warehouse, I identified the analyses I planned to perform, the info
 
 As part of the project, various SQL reports were written using both databases to analyze retail sales performance from different perspectives, including overall trends, customers, products, and sales representatives.
 
-An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL.
+An AI Agent is built to allow users to analyze sales returns using data stored on a PostgreSQL server through natural language and receive a report that summarizes the important findings without any prior knowledge of SQL.
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
@@ -81,7 +81,7 @@ A star schema was designed to support analysis of sales and returns; therefore, 
 ## Return Analysis Agent
 ### Overview
 
-An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL. The AI Agent has access to LLM models from OpenAI and a PostgreSQL server to accomplish this. The LLM model is responsible for determining what actions the AI Agent should perform. More specifically, the model can generate an analysis plan and relevant SQL queries based on the user's question. It can also adapt its behavior once it receives SQL results and clarification from the user to determine if additional analysis is needed. When the analysis is complete, it interprets the results and produces the final report.
+An AI Agent is built to allow users to analyze sales returns using data stored on a PostgreSQL server through natural language and receive a report that summarizes the important findings without any prior knowledge of SQL. The AI Agent has access to LLM models from OpenAI and a PostgreSQL server to accomplish this. The LLM model is responsible for determining what actions the AI Agent should perform. More specifically, the model can generate an analysis plan and relevant SQL queries based on the user's question. It can also adapt its behavior once it receives SQL results and clarification from the user to determine if additional analysis is needed. When the analysis is complete, it interprets the results and produces the final report.
 
 ### Architecture and Guardrails
 
