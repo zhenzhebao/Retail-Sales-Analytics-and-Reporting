@@ -9,7 +9,7 @@ For the data warehouse, I identified the analyses I planned to perform, the info
 
 As part of the project, various SQL reports were written using both databases to analyze retail sales performance from different perspectives, including overall trends, customers, products, and sales representatives.
 
-Currently, I am exploring how to use an AI agent to analyze returns and summarize the findings in a report.
+An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL.
 
 Dataset Source: https://archive.ics.uci.edu/dataset/352/online+retail
 
@@ -142,3 +142,10 @@ Once the LLM receives the tool result, if it believes the analysis is completed,
 The user can also ask a follow-up question about the final report. A text response will be displayed, the tool call loop will break, and the main loop will continue for a response. Cancel analysis will set processing_request to False, break the tool call loop, and continue the main loop for a new question. A tool call request will continue the current tool call loop.
 
 If the LLM doesn’t generate the final report, a text response will be displayed, the tool call loop will break, and the program will ask for a response. A tool call will continue the current tool call loop and process the tool call again.
+
+### Demonstration
+<img width="70%" alt="Screenshot 2026-10-07 at 23 27 58" src="https://github.com/user-attachments/assets/91612da9-1b23-44af-9205-1295d76e2559" />
+
+<img width="70%" alt="Picsew_20261007233650" src="https://github.com/user-attachments/assets/1f9e23d2-9db9-40f7-97d2-1c842c822e89" />
+
+
