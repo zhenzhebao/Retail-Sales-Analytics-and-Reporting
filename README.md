@@ -83,7 +83,7 @@ A star schema was designed to support analysis of sales and returns; therefore, 
 
 An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL. The AI Agent has access to LLM models from OpenAI and a PostgreSQL server to accomplish this. The LLM model is responsible for determining what actions the AI Agent should perform. More specifically, the model can generate an analysis plan and relevant SQL queries based on the user's question. It can also adapt its behavior once it receives SQL results and clarification from the user to determine if additional analysis is needed. When the analysis is complete, it interprets the results and produces the final report.
 
-### Architecture and Guardrail
+### Architecture and Guardrails
 
 #### PostgreSQL
 The all_return_data view is created based on cleaned data and includes only relevant information needed for analysis.
@@ -144,8 +144,11 @@ The user can also ask a follow-up question about the final report. A text respon
 If the LLM doesn’t generate the final report, a text response will be displayed, the tool call loop will break, and the program will ask for a response. A tool call will continue the current tool call loop and process the tool call again.
 
 ### Demonstration
+
+#### Analysis Plan and Human Approval
 <img width="70%" alt="Screenshot 2026-10-07 at 23 27 58" src="https://github.com/user-attachments/assets/91612da9-1b23-44af-9205-1295d76e2559" />
 
+#### Final Report
 <img width="70%" alt="Picsew_20261007233650" src="https://github.com/user-attachments/assets/1f9e23d2-9db9-40f7-97d2-1c842c822e89" />
 
 
