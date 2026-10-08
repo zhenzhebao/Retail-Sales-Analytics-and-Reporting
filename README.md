@@ -128,3 +128,17 @@ Structured Outputs with text format are implemented to ensure the model generate
 - API and Database Integration
 - Error Handling and Data Validation 
 
+### Execution Logic
+The program displays instructions on how to use it for the first time.
+
+The user input (question or response) will be checked to ensure it is not empty or one of the keywords (exit, help, reset). If the input is a keyword, the program will perform the appropriate action.
+
+Other questions will go through question classification. An invalid question is rejected, and the user has some attempts to retry before the program stops. So, the API tokens will not be wasted on processing many irrelevant questions at this step. If the question is relevant, processing_request will be set to True so the program is ready to take a response from the user, and the question will be processed for the first time. If the LLM believes it can’t generate an analysis plan, the conversation will reset (e.g., analyze returns in 2024). Otherwise, the LLM response will be displayed, the user will need to approve the analysis plan, and the current response ID is saved as the previous message ID for the next request to the LLM to retain conversation history.
+
+Once the program receives the user response, the LLM will process it. If the analysis status is cancel_analysis, the conversation is reset. If the LLM generates another text response, it will display it to the user and ask for their response. If that is a tool, a while loop will perform the tool call request, prepare SQL queries, send SQL requests, clean returned SQL data, and send it back to the LLM.
+
+Once the LLM receives the tool result, if it believes the analysis is completed, analysis_status is final_report, and the report will be displayed. The user can press Enter or type reset to start a new conversation. The processing status will be set to False, the tool call loop will break, and the main while loop will continue. The user can also type exit to end the program. It sets the program status to False, breaks the tool call loop, and continues the main while loop. The main while loop needs the program status to be True to run, so the program stops.
+
+The user can also ask a follow-up question about the final report. A text response will be displayed, the tool call loop will break, and the main loop will continue for a response. Cancel analysis will set processing_request to False, break the tool call loop, and continue the main loop for a new question. A tool call request will continue the current tool call loop.
+
+If the LLM doesn’t generate the final report, a text response will be displayed, the tool call loop will break, and the program will ask for a response. A tool call will continue the current tool call loop and process the tool call again.
