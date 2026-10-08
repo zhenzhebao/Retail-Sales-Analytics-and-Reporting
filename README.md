@@ -113,6 +113,7 @@ Structured Outputs with text format are implemented to ensure the model generate
 ### Technologies
 
 - Python, SQL, PostgreSQL, OpenAI API
+- OpenAI Playground (System prompt testing)
 - Codex (prompt-based automated testing)
 
 ### Skills
