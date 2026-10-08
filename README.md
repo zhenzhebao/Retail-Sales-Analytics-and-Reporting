@@ -83,6 +83,29 @@ A star schema was designed to support analysis of sales and returns; therefore, 
 
 An AI Agent is built to allow users to analyze sales returns using natural language and receive a report that summarizes the important findings without any prior knowledge of SQL. The AI Agent has access to LLM models from OpenAI and a PostgreSQL server to accomplish this. The LLM model is responsible for determining what actions the AI Agent should perform. More specifically, the model can generate an analysis plan and relevant SQL queries based on the user's question. It can also adapt its behavior once it receives SQL results and clarification from the user to determine if additional analysis is needed. When the analysis is complete, it interprets the results and produces the final report.
 
+### Architecture and Guardrail
 
-- Data: Relevant tables were properly joined, and only fields related to the analysis were selected to produce the all_retail_data materialized view. This view was filtered to keep only sales or return records to produce the all_sales_data and all_return_data views.
-- Tools: Six SQL reports were written to analyze returns from particular aspects. The SQL reports were wrapped in Python functions that define the required information the agent needs to provide to use each tool, validate the information provided by the agent, and form the complete SQL query.
+#### PostgreSQL
+The all_return_data view is created based on cleaned data and includes only relevant information needed for analysis.
+The Python application has only SELECT permission on this view to prevent data modification by the LLM. The prepared view hides the underlying database structure from the LLM and improves the quality of SQL queries constructed by the LLM.
+
+#### LLM
+- Inexpensive model: gpt-6-luna
+Classifies user questions to ensure the Agent only processes relevant questions.
+
+- gpt-5.6-luna (all other tasks)
+    - Generates analysis plans based on user questions, asks users to clarify ambiguous questions, and requests human approval before conducting analysis
+    - Determines the appropriate predefined tools or constructs SQL queries when needed for analysis, generates correct arguments for predefined tools, and initiates tool calls
+    - Processes SQL results to determine if additional analysis is needed or generates the final report when the analysis is complete
+
+Structured Outputs with text format are implemented to ensure the model generates its responses in a consistent format.
+
+#### Python Script
+
+- Processes user questions or responses to exit the program, restart the conversation, or send them to the LLM.
+    
+- Processes text responses from the LLM, executes the appropriate next steps, and presents the results to the user.
+    
+- Processes tool call requests from the LLM, selects the appropriate predefined tools and validates the arguments provided by the LLM, or prepares customized SQL queries. Sends SQL requests to the PostgreSQL server, cleans the SQL query results, and sends them back to the LLM.
+    
+- Performs basic validation of LLM responses and SQL query results to check for missing or unexpected information, and raises exceptions when errors are detected.
