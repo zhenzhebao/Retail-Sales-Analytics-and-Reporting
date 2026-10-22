@@ -118,6 +118,7 @@ Structured Outputs with text format are implemented to ensure the model generate
 
 ### Testing and Design Improvements
 I wrote system prompts to use Codex for automated testing to identify bugs and evaluate AI Agent response quality.
+
 During testing, Codex identified a limitation in the application's conversation flow: users could not ask follow-up questions about the final report because the conversation ended once the report was generated. Although the application was functioning as originally intended, I recognized that this behavior limited users' ability to seek clarification. Therefore I updated the Python application to allow users to ask follow-up questions about the final report and decide when to end the current conversation and start a new one themselves.
 
 ### Skills
