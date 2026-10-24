@@ -116,7 +116,11 @@ Structured Outputs with text format are implemented to ensure the model generate
 - OpenAI Playground (System prompt testing)
 - Codex (prompt-based automated testing)
 
-### Testing and Design Improvements
+### Application Development, Testing and Design Improvements
+The application development started with identifying the intended outcome and requirements. Then I determined the major steps needed to achieve the outcome, which helped me identify the major components, the preparation work required for each system, and how the different systems would interact. After that, I developed each component individually, tested it, and fixed bugs before integrating it into the main script.
+
+After completing and testing the entire application, I spent some time refactoring the code to improve maintainability. I combined multiple lines of code to make the implementation more concise and reorganized the execution logic to make it easier to understand. I also addressed several implementation issues from earlier versions. For example, I modified Python functions to return the required values directly rather than having the main execution flow extract them. I replaced generic variables, such as question and result, that had been reused for different purposes with separate variables with more descriptive names to avoid confusion. I also standardized return values so that the same situations would produce consistent outputs across different systems.
+
 I wrote system prompts to use Codex for automated testing to identify bugs and evaluate AI Agent response quality.
 
 During testing, Codex identified a limitation in the application's conversation flow: users could not ask follow-up questions about the final report because the conversation ended once the report was generated. Although the application was functioning as originally intended, I recognized that this behavior limited users' ability to seek clarification. Therefore I updated the Python application to allow users to ask follow-up questions about the final report and decide when to end the current conversation and start a new one themselves.
